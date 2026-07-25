@@ -1,0 +1,23 @@
+# Python caching and environment
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Large raw & final data files
+data/raw/rwdb/retraction_watch.csv
+data/raw/tortured_phrases/
+data/raw/tanu_pro/
+data/final/
+
+# Backup archives
+*.zip
+*_backup*
+
+# OS/Editor configurations
+.DS_Store
+.vscode/
+
+# Diagnostics archive
+scripts/diagnostics/
