@@ -252,7 +252,31 @@ Nous avons calculé les intervalles de confiance à 95 % par rééchantillonnage
 
 L'explication est plus profonde : **les fraudes liées aux réseaux d'évaluation par les pairs et aux cartels de citations ne laissent aucune signature détectable au niveau sémantique ou lexical dans le résumé des articles.** Les textes de ces paper mills sont rédigés avec le même vocabulaire et le même style que les articles scientifiques authentiques. L'échec des modèles n'est pas un défaut de capacité des algorithmes (le même modèle PubMedBERT échouant également), mais découle de l'absence physique de signal discriminant dans les abstracts de ce stratum. Pour détecter ces cas, il est indispensable de sortir du cadre textuel et d'analyser les métadonnées de processus.
 
+### 5.4. Analyse qualitative des erreurs du modèle (Phase 11)
+Afin d'identifier les limites opérationnelles et les biais cognitifs du modèle de référence, nous avons extrait un échantillon arbitraire représentatif (correspondant à l'ordre d'indexation dans les fichiers) de 12 erreurs de prédiction issues des ensembles de test et de holdout. L'analyse détaillée de ces cas permet de catégoriser deux grands modes de défaillance.
+
+#### A. Le surapprentissage des gabarits micro-ARN/LncRNA (Faux Positifs)
+Le principal facteur de faux positifs (articles scientifiques légitimes classés à tort comme frauduleux, avec des probabilités de fraude variant de 0,53 à 0,71) est l'omniprésence de termes à poids positif extrême liés à la biologie moléculaire des ARN non-codants :
+*   `microrna` (poids +8,04), `mir` (poids +5,00), `noncoding` (poids +2,93), `long noncoding` (poids +2,85) et `apoptosis` (poids +3,76).
+
+L'audit des abstracts légitimes faussement détectés montre un recoupement textuel massif avec ces termes :
+*   **Case 1 (DOI: 10.1155/2020/8891876) :** Contient littéralement `microrna` (+8,04), `mir` (+5,00) et la bigramme `and invasion` (+4,13) pour décrire la régulation de Twist1.
+*   **Case 2 (DOI: 10.1155/2020/8124570) :** Contient `mir` (+5,00), `apoptosis` (+3,76) et `long noncoding` (+2,85) pour décrire l'action du LncRNA HAND2-AS1.
+*   **Case 8 (DOI: 10.1002/iub.2012) :** Contient `mir` (+5,00), `apoptosis` (+3,76) et `long noncoding` (+2,85) pour décrire le rôle de MEG3.
+
+*Conclusion :* Pour Spandidos et d'autres éditeurs, la fraude documentaire repose sur des résumés sémantiquement standardisés construits autour de micro-ARN/LncRNA. Le modèle a surappris cette corrélation lexicale, ce qui le conduit à rejeter des études oncologiques réelles et valides sur la régulation par ARN simplement parce qu'elles emploient la terminologie scientifique standard de cette discipline.
+
+#### B. La ressemblance avec le style bioinformatique standard (Faux Négatifs)
+Le principal facteur de faux négatifs (articles d'usines à articles classés comme sains, avec des probabilités s'effondrant entre 0,01 et 0,17) est l'adoption d'un style de rédaction calqué sur les analyses de données bioinformatiques cliniques publiques :
+*   **Case 4 (DOI: 10.1155/2021/5070099) :** Titré *« Development and Validation of a Novel Mitophagy-Related Gene Prognostic Signature... »* (Probabilité prédite = 0,0581).
+*   **Case 5 (DOI: 10.1155/2021/4682589) :** Titré *« Establishing and Validating an Aging-Related Prognostic Four-Gene Signature... »* (Probabilité prédite = 0,0170).
+
+Ces articles frauduleux ne décrivent pas des expériences in vitro / in vivo stéréotypées (les Western blots typiques des paper mills à haute signature lexicale), mais simulent des études pronostiques basées sur des données extraites de bases publiques comme TCGA. Leurs résumés emploient des termes comme `Cox regression`, `Kaplan-Meier`, `TCGA database` et `nomogram`. 
+
+*Conclusion :* Comme ces termes de modélisation clinique possèdent des poids neutres ou négatifs dans le classifieur (étant associés aux articles négatifs légitimes d'oncologie clinique et translationnelle), les paper mills qui génèrent des faux profils d'analyse de données contournent entièrement la détection lexicale en se fondant parfaitement dans la masse des études bioinformatiques.
+
 ---
+
 
 ## 6. Perspectives et Travaux Futurs (Phase 8)
 
