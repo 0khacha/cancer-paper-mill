@@ -28,7 +28,8 @@ cancer-paper-mill/
 │           ├── tortured_phrases.zip    # Tortured phrases source archive
 │           └── extracted/              # Extracted Cabanac replication code & Excel tables
 ├── docs/
-│   └── DATASET_CARD.md     <-- Detailed dataset card, methodology, and limitations
+│   ├── DATASET_CARD.md     # Detailed dataset card, methodology, and limitations
+│   └── THESIS_CHAPTER.md   # Full thesis chapter: methodology, baseline model, and causal limits
 ├── figures/                <-- Recomputed French report audit figures
 │   ├── figure_1.png        # Annual distribution of positive and negative classes
 │   ├── figure_2.png        # Publisher shares post-purge

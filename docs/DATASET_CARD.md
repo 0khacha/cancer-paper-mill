@@ -4,7 +4,7 @@
 The Cancer Paper Mill (CPM-11K) dataset is a verified labeled corpus constructed for training and evaluating machine learning models to detect fraudulent research outputs originating from paper mills in the oncology and cancer biology domains.
 
 *   **Total Stable Records (Main Dataset):** 11,106
-*   **Positives (Paper Mill Retractions):** 2,117
+*   **Positives (Paper Mill Retractions):** 2,111
 *   **Negatives (Clean Matching Literature):** 8,995
 *   **Dataset Ratio:** 4.26:1 (Deduplicated unique DOIs)
 
