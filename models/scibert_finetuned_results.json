@@ -1,0 +1,63 @@
+{
+  "epoch_history": [
+    {
+      "epoch": 1,
+      "loss": 0.08045451704210045,
+      "auc": 1.0,
+      "best_f1": 1.0,
+      "best_thresh": 0.1,
+      "f1_05": 0.9980119284294234
+    },
+    {
+      "epoch": 2,
+      "loss": 0.003126944235803429,
+      "auc": 1.0,
+      "best_f1": 1.0,
+      "best_thresh": 0.1,
+      "f1_05": 1.0
+    },
+    {
+      "epoch": 3,
+      "loss": 0.0014452824087239863,
+      "auc": 1.0,
+      "best_f1": 1.0,
+      "best_thresh": 0.1,
+      "f1_05": 1.0
+    }
+  ],
+  "best_epoch": 1,
+  "best_threshold": 0.1,
+  "overall": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "auc": 1.0,
+    "pr_auc": 1.0
+  },
+  "stratified": {
+    "hindawi": {
+      "f1": 1.0,
+      "prec": 1.0,
+      "rec": 1.0,
+      "auc": 1.0,
+      "n_pos": 134,
+      "n_neg": 356
+    },
+    "spandidos": {
+      "f1": 1.0,
+      "prec": 1.0,
+      "rec": 1.0,
+      "auc": 0.9999999999999999,
+      "n_pos": 22,
+      "n_neg": 45
+    },
+    "others": {
+      "f1": 1.0,
+      "prec": 1.0,
+      "rec": 1.0,
+      "auc": 1.0,
+      "n_pos": 96,
+      "n_neg": 787
+    }
+  }
+}

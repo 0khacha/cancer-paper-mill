@@ -21,3 +21,7 @@ data/final/
 
 # Diagnostics archive
 scripts/diagnostics/
+
+# Large model checkpoints
+models/*.pt
+
