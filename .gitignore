@@ -27,3 +27,4 @@ data/final/
 
 # Large model checkpoints
 *.pt
+*_LOG.md
