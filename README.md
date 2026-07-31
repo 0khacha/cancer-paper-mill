@@ -20,30 +20,39 @@ cancer-paper-mill/
 │   │   ├── journal_to_nlm.json         # Journal name to NLM abbreviation mappings
 │   │   └── recent_unstable_dataset.json# Excluded 2024-2025 unstable records (retraction lag)
 │   └── raw/                <-- Raw input data sources (Git ignored)
-│       ├── rwdb/
-│       │   └── retraction_watch.csv    # Retraction Watch Database CSV dump
-│       ├── tanu_pro/
-│       │   └── tanu_pro.xlsx           # Original Tanu Pro positive source dataset
-│       └── tortured_phrases/
-│           ├── tortured_phrases.zip    # Tortured phrases source archive
-│           └── extracted/              # Extracted Cabanac replication code & Excel tables
+│       └── rwdb/
+│           └── retraction_watch.csv    # Retraction Watch Database CSV dump
 ├── docs/
 │   ├── DATASET_CARD.md     # Detailed dataset card, methodology, and limitations
-│   └── THESIS_CHAPTER.md   # Full thesis chapter: methodology, baseline model, and causal limits
-├── figures/                <-- Recomputed French report audit figures
-│   ├── figure_1.png        # Annual distribution of positive and negative classes
-│   ├── figure_2.png        # Publisher shares post-purge
-│   ├── figure_3.png        # Initial article fate (abstract failure, oncology reject, final pool)
-│   ├── figure_4.png        # Partition split volumes
-│   └── figure_5.png        # Global class imbalance ratio (1:4.26)
+│   ├── THESIS_CHAPTER.md   # Full thesis chapter: methodology, baseline model, and causal limits
+│   └── figures/            <-- Embedded figures for the thesis
 ├── scripts/
-│   ├── diagnostics/        <-- Archive of developmental and diagnostic scripts (non-active)
-│   └── pipeline/           <-- Active production scripts
-│       ├── fetch_abstracts.py          # Stage 5 Abstract recovery and oncology checks
-│       ├── generate_french_figures.py  # Stage 6 Metric auditor and French figure generator
-│       ├── generate_negatives.py       # Stage 4 MEDLINE control matching query engine
-│       ├── split_dataset.py            # Stage 6 Group-aware partition split engine
-│       └── validate_negatives.py       # Stage 4 Validation checks
+│   ├── analysis/           <-- Core evaluation and experimental analysis scripts
+│   │   ├── compare_normalization_results.py
+│   │   ├── quantify_extraction_artifacts.py
+│   │   ├── run_cross_transfer_attribution.py
+│   │   ├── run_cross_transfer_audit.py
+│   │   └── run_hard_negative_stress_test.py
+│   ├── diagnostics/        <-- Active structural diagnostics and stratification checks
+│   │   ├── check_leakage_and_score_space.py
+│   │   ├── diagnose_purges.py
+│   │   ├── diagnose_strata.py
+│   │   └── evaluate_sous_groupe_b.py
+│   └── pipeline/           <-- Active production data engineering & modeling scripts
+│       ├── evaluate_all_models.py
+│       ├── fetch_abstracts.py
+│       ├── finetune_pubmedbert.py
+│       ├── finetune_pubmedbert_normalized.py
+│       ├── finetune_scibert.py
+│       ├── generate_final_eval_figures.py
+│       ├── generate_french_figures.py
+│       ├── generate_negatives.py
+│       ├── normalize_abstracts.py
+│       ├── run_controls_training.py
+│       ├── significance_testing.py
+│       ├── split_dataset.py
+│       ├── train_classical_baselines.py
+│       └── validate_negatives.py
 ├── .gitignore
 ├── requirements.txt
 └── README.md

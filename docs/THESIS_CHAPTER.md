@@ -24,13 +24,13 @@ Pour l'apprentissage supervisé, nous avons construit le jeu de données Cancer 
 *   **Classe positive (Paper Mills) :** Extraite de la base Retraction Watch Database (RWDB) [1] pour le sujet « *cancer* », puis récupérée via APIs PubMed/Crossref sous sa forme originale (avant rétraction).
 *   **Classe négative (Contrôles sains) :** Appariée thématiquement pour chaque cas positif dans le même journal et la même année ($± 1$ an). La recherche PubMed [2] a été limitée au domaine oncologique par une requête de mots-clés, avec validation automatisée via un script de correspondance de mots-clés oncologiques dans le titre. Les publications de type éditoriaux ou revues ont été exclues.
 
-![Distribution annuelle des classes positive et négative](../figures/figure_1.png)
+![Distribution annuelle des classes positive et négative](figures/figure_1.png)
 *Figure 1 : Distribution annuelle des articles positifs (paper mills) et négatifs (contrôles sains) dans le jeu de données CPM-11K.*
 
-![Part des éditeurs post-purge](../figures/figure_2.png)
+![Part des éditeurs post-purge](figures/figure_2.png)
 *Figure 2 : Parts relatives des principaux éditeurs au sein de la classe positive (paper mills) après application des filtres de purge.*
 
-![Ratio global de déséquilibre des classes](../figures/figure_5.png)
+![Ratio global de déséquilibre des classes](figures/figure_5.png)
 *Figure 3 : Proportion globale des classes positive et négative au sein du jeu de données final CPM-11K (imbalance ratio de 1:4.26).*
 
 ### 1.2. Nettoyage et purge des données
@@ -38,7 +38,7 @@ Pour l'apprentissage supervisé, nous avons construit le jeu de données Cancer 
 2.  **Cascade de purge :** Après exclusion des résumés irrécupérables ou non oncologiques, le taux de perte s'élève à 17,0 % pour la classe positive contre 2,6 % pour la classe négative. Ce déséquilibre s'explique par les politiques de retrait sélectif des éditeurs.
 3.  **Filtrage temporel :** Les articles des années 2024-2025 ont été exclus en raison du délai incompressible de signalement des rétractions (*retraction lag*).
 
-![Cascade de purge et d'exclusion](../figures/figure_3.png)
+![Cascade de purge et d'exclusion](figures/figure_3.png)
 *Figure 4 : Cascade méthodologique d'inclusion, d'exclusion et de nettoyage des données pour les classes positive et négative.*
 
 ---
@@ -62,7 +62,7 @@ L'analyse de l'implémentation initiale du co-autorat (un seul auteur commun) a 
     *   **Validation :** 1 440 articles (252 pos, 1 188 neg)
     *   **Test :** 1 440 articles (252 pos, 1 188 neg)
 
-![Partition split volumes](../figures/figure_4.png)
+![Partition split volumes](figures/figure_4.png)
 *Figure 5 : Répartition des volumes d'articles positifs et négatifs au sein des partitions d'entraînement, de validation et de test (le pool Hindawi-Holdout restant à part).*
 
 ---
@@ -83,7 +83,7 @@ Les distributions des longueurs de résumés sont homogènes entre les classes (
 | *(N = 5 544)* | Médiane | 1463,0 | 208,0 |
 | | Min / Max | 50 / 4983 | 6 / 789 |
 
-![Distribution des longueurs des résumés](../figures/figure_eda_lengths.png)
+![Distribution des longueurs des résumés](figures/figure_eda_lengths.png)
 *Figure 6 : Histogrammes comparatifs des distributions de longueurs des résumés (mots et caractères) pour les classes positive (paper mills) et négative (littérature légitime).*
 
 ### 3.2. Biais lexicaux et d'éditeurs
@@ -166,7 +166,7 @@ L'évaluation globale de ces modèles sur l'ensemble de validation (1 440 articl
 
 *† Voir Section 5.8 pour une mise en garde critique concernant l'interprétation de ce résultat.*
 
-![Comparaison globale des performances](../figures/comparaison_globale.png)
+![Comparaison globale des performances](figures/comparaison_globale.png)
 *Figure 7 : Comparaison des scores F1 et ROC-AUC globaux des modèles classiques et gelés sur l'ensemble de validation.*
 
 #### Tableau comparatif stratifié par éditeur (Validation F1 / ROC-AUC)
@@ -183,7 +183,7 @@ L'évaluation globale de ces modèles sur l'ensemble de validation (1 440 articl
 | **PubMedBERT (fine-tuned)†** | **100,00% (100,00%)** | **100,00% (100,00%)** | **100,00% (100,00%)** |
 | **SciBERT (fine-tuned)†** | **100,00% (100,00%)** | **100,00% (100,00%)** | **100,00% (100,00%)** |
 
-![Comparaison stratifiée par éditeur](../figures/comparaison_stratified.png)
+![Comparaison stratifiée par éditeur](figures/comparaison_stratified.png)
 *Figure 8 : Comparaison des scores F1 des modèles par strate d'éditeur (Hindawi, Spandidos, Pooled Others) sur l'ensemble de validation.*
 
 *† Voir Section 5.8 pour une mise en garde critique concernant l'interprétation de ce résultat.*
@@ -204,7 +204,7 @@ Ces résultats suggèrent une capacité d'apprentissage exceptionnelle des repr�
 2. **vs. Character N-grams :** McNemar $\chi^2 = 2,45$ ($p = 0,117$), montrant que la répartition des erreurs de classification individuelles n'est pas statistiquement distincte au seuil de $5\%$. Cependant, le bootstrap F1 estime une différence de F1 moyenne de $+6,60\%$ avec un intervalle de confiance à 95% de $[2,04\%, 11,20\%]$, indiquant une amélioration robuste et significative de la métrique F1 globale en faveur du modèle de mots.
 3. **vs. Embeddings Biomédicaux (PubMedBERT gelé) :** McNemar $\chi^2 = 14,62$ ($p = 0,000132$), confirmant une différence statistiquement significative. Le bootstrap estime une différence de F1 moyenne de $+8,10\%$ avec un intervalle de confiance à 95% de $[3,65\%, 12,68\%]$, démontrant la supériorité statistique du modèle lexical sur les embeddings gelés.
 
-![Forest plot de significativité statistique](../figures/significativite_forest_plot.png)
+![Forest plot de significativité statistique](figures/significativite_forest_plot.png)
 *Figure 9 : Intervalles de confiance à 95% de la différence de F1 (dF1) par rapport au modèle TF-IDF Combiné et p-values associées au test de McNemar.*
 
 
@@ -359,7 +359,7 @@ En revanche, le **fine-tuning de bout en bout** réoriente les mécanismes d'att
 
 **Mise en garde pour le déploiement et appel à réplication :** Bien que ce signal stylistique soit réel et généralisable au sein du corpus d'évaluation, cette détection repose sur un **surapprentissage de style** (*style-overfitting*). Si les usines à articles modifient leurs patrons de rédaction ou emploient des générateurs de texte plus avancés, cette signature syntaxique locale disparaîtra, rendant le transformeur inefficace. C'est pourquoi, en conditions réelles, le modèle lexical stable (TF-IDF) demeure la référence de base pour l'évaluation de la robustesse sémantique.
 
-![Comparaison F1 avec modèles fine-tunés](../figures/modeles_finetunes.png)
+![Comparaison F1 avec modèles fine-tunés](figures/modeles_finetunes.png)
 *Figure 10 : Performances comparées incluant les modèles profonds fine-tunés avec mise en garde visuelle sur le risque de surapprentissage stylistique (Section 5.8).*
  Les résultats parfaits des modèles fine-tunés doivent donc être interprétés comme une opportunité de détection ciblée à un instant $t$ de la chaîne de fabrication industrielle, mais appellent à des réplications indépendantes sur des corpus étanches plus récents.
 

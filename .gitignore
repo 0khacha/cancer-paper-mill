@@ -20,8 +20,10 @@ data/final/
 .vscode/
 
 # Diagnostics archive
-scripts/diagnostics/
+# scripts/diagnostics/
+
+# Internal AI Archives
+.archive/
 
 # Large model checkpoints
-models/*.pt
-
+*.pt
