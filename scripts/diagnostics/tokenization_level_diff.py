@@ -80,16 +80,9 @@ def calculate_metrics(abstract):
         'has_residue': has_residue
     }
 
-def bootstrap_ci_diff(arr1, arr2, func, n_resamples=2000):
-    np.random.seed(42)
-    diffs = []
-    n1 = len(arr1)
-    n2 = len(arr2)
-    for _ in range(n_resamples):
-        samp1 = np.random.choice(arr1, size=n1, replace=True)
-        samp2 = np.random.choice(arr2, size=n2, replace=True)
-        diffs.append(func(samp1) - func(samp2))
-    return np.percentile(diffs, [2.5, 97.5])
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from scripts.utils.stats import bootstrap_ci_diff
 
 def main():
     with open(os.path.join(project_root, 'data', 'final', 'cancer_pm_holdout.json'), 'r', encoding='utf-8') as f:

@@ -15,17 +15,9 @@ original_splits = [
     ("holdout", "data/final/cancer_pm_holdout.json")
 ]
 
-headers_list = [
-    "MATERIALS AND METHODS", "PATIENTS AND METHODS", "BACKGROUND", 
-    "OBJECTIVE", "OBJECTIVES", "AIM", "AIMS", "INTRODUCTION", 
-    "PURPOSE", "METHOD", "METHODS", "RESULT", "RESULTS", 
-    "CONCLUSION", "CONCLUSIONS", "DISCUSSION", "SIGNIFICANCE", "DESIGN"
-]
-headers_pat = "|".join(headers_list)
-header_regex = re.compile(
-    rf'([.,!;?\-\s\(\[\]\)]*)\b({headers_pat})\b\s*[\]\)]*\s*:\s*([\(\[\]\)\-\s,;:]*)',
-    re.IGNORECASE
-)
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from scripts.utils.artifacts import header_regex
 
 # Load publisher mapping logic
 journal_to_publisher = {}

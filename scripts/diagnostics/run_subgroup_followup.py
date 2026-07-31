@@ -89,21 +89,9 @@ class BERTClassifier(nn.Module):
         logits = self.classifier(cls_embedding)
         return logits
 
-def bootstrap_ci(data, stat_fn, n_resamples=2000, ci=95):
-    """Compute bootstrap CI for a given statistic."""
-    data = np.array(data)
-    stats = []
-    n = len(data)
-    np.random.seed(42)
-    for _ in range(n_resamples):
-        indices = np.random.randint(0, n, n)
-        sample = data[indices]
-        stats.append(stat_fn(sample))
-    
-    alpha = (100 - ci) / 2
-    lower = np.percentile(stats, alpha)
-    upper = np.percentile(stats, 100 - alpha)
-    return lower, upper
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from scripts.utils.stats import bootstrap_ci
 
 def main():
     print("=" * 80)
