@@ -1,0 +1,294 @@
+{
+  "timestamp": "2026-07-31T18:43:59.327429+00:00",
+  "pre_registered_thresholds": {
+    "glued_header_threshold": 0.35,
+    "fpr_threshold": 0.05,
+    "min_n": 100
+  },
+  "artifact_results": {
+    "Provenance-Matched Neg": {
+      "N": 301,
+      "glued_header": 76,
+      "glued_header_rate": 0.25249169435215946,
+      "stray_punctuation": 69,
+      "stray_punc_rate": 0.2292358803986711,
+      "whitespace": 131,
+      "whitespace_rate": 0.43521594684385384,
+      "unicode": 4,
+      "unicode_rate": 0.013289036544850499,
+      "any_artifact": 131,
+      "any_rate": 0.43521594684385384
+    },
+    "Original Holdout Neg (Hindawi)": {
+      "N": 1075,
+      "glued_header": 301,
+      "glued_header_rate": 0.28,
+      "stray_punctuation": 242,
+      "stray_punc_rate": 0.22511627906976744,
+      "whitespace": 515,
+      "whitespace_rate": 0.4790697674418605,
+      "unicode": 2,
+      "unicode_rate": 0.0018604651162790699,
+      "any_artifact": 516,
+      "any_rate": 0.48
+    },
+    "Holdout Pos (PubMed)": {
+      "N": 416,
+      "glued_header": 194,
+      "glued_header_rate": 0.46634615384615385,
+      "stray_punctuation": 103,
+      "stray_punc_rate": 0.24759615384615385,
+      "whitespace": 195,
+      "whitespace_rate": 0.46875,
+      "unicode": 0,
+      "unicode_rate": 0.0,
+      "any_artifact": 195,
+      "any_rate": 0.46875
+    },
+    "Holdout Pos (Crossref)": {
+      "N": 13,
+      "glued_header": 0,
+      "glued_header_rate": 0.0,
+      "stray_punctuation": 0,
+      "stray_punc_rate": 0.0,
+      "whitespace": 0,
+      "whitespace_rate": 0.0,
+      "unicode": 3,
+      "unicode_rate": 0.23076923076923078,
+      "any_artifact": 3,
+      "any_rate": 0.23076923076923078
+    },
+    "Val Hindawi Pos (all)": {
+      "N": 134,
+      "glued_header": 73,
+      "glued_header_rate": 0.5447761194029851,
+      "stray_punctuation": 51,
+      "stray_punc_rate": 0.3805970149253731,
+      "whitespace": 73,
+      "whitespace_rate": 0.5447761194029851,
+      "unicode": 1,
+      "unicode_rate": 0.007462686567164179,
+      "any_artifact": 74,
+      "any_rate": 0.5522388059701493
+    },
+    "Val Hindawi Neg": {
+      "N": 356,
+      "glued_header": 94,
+      "glued_header_rate": 0.2640449438202247,
+      "stray_punctuation": 74,
+      "stray_punc_rate": 0.20786516853932585,
+      "whitespace": 158,
+      "whitespace_rate": 0.4438202247191011,
+      "unicode": 1,
+      "unicode_rate": 0.0028089887640449437,
+      "any_artifact": 159,
+      "any_rate": 0.44662921348314605
+    }
+  },
+  "score_results": {
+    "Provenance-Matched Neg": {
+      "N": 301,
+      "min": 0.0008989246562123299,
+      "Q1": 0.0012037863489240408,
+      "median": 0.001352156512439251,
+      "Q3": 0.001644954434596002,
+      "max": 0.9952377080917358,
+      "mean": 0.03513587638735771,
+      "std": 0.16945162415504456,
+      "predicted_positive_at_010": 12,
+      "fpr_at_010": 0.03986710963455149
+    },
+    "Original Holdout Neg (Hindawi)": {
+      "N": 1075,
+      "min": 0.0008084995206445456,
+      "Q1": 0.0011101765558123589,
+      "median": 0.001271093264222145,
+      "Q3": 0.0015161872725002468,
+      "max": 0.011006436310708523,
+      "mean": 0.001476550125516951,
+      "std": 0.0008126061875373125,
+      "predicted_positive_at_010": 0,
+      "fpr_at_010": 0.0
+    },
+    "Holdout Pos (PubMed)": {
+      "N": 416,
+      "min": 0.0053727771155536175,
+      "Q1": 0.9880623817443848,
+      "median": 0.9926493167877197,
+      "Q3": 0.9943155348300934,
+      "max": 0.9966264963150024,
+      "mean": 0.9644200205802917,
+      "std": 0.12856872379779816,
+      "predicted_positive_at_010": 411,
+      "fpr_at_010": 0.9879807692307693
+    },
+    "Holdout Pos (Crossref)": {
+      "N": 13,
+      "min": 0.001271991292014718,
+      "Q1": 0.20775458216667175,
+      "median": 0.9629199504852295,
+      "Q3": 0.9914616346359253,
+      "max": 0.9953893423080444,
+      "mean": 0.6798939108848572,
+      "std": 0.41398537158966064,
+      "predicted_positive_at_010": 10,
+      "fpr_at_010": 0.7692307692307693
+    }
+  },
+  "per_journal_glued_rates": {
+    "Biomed Res Int": {
+      "N": 105,
+      "rate": 0.26666666666666666
+    },
+    "Comput Math Methods Med": {
+      "N": 49,
+      "rate": 0.1836734693877551
+    },
+    "Evid Based Complement Alternat Med": {
+      "N": 44,
+      "rate": 0.4090909090909091
+    },
+    "J Healthc Eng": {
+      "N": 35,
+      "rate": 0.2
+    },
+    "Contrast Media Mol Imaging": {
+      "N": 16,
+      "rate": 0.4375
+    },
+    "Comput Intell Neurosci": {
+      "N": 21,
+      "rate": 0.0
+    },
+    "Oxid Med Cell Longev": {
+      "N": 6,
+      "rate": 0.0
+    },
+    "Pacing Clin Electrophysiol": {
+      "N": 6,
+      "rate": 0.0
+    },
+    "Emerg Med Int": {
+      "N": 4,
+      "rate": 1.0
+    },
+    "Stem Cells Int": {
+      "N": 5,
+      "rate": 0.2
+    },
+    "Bioinorg Chem Appl": {
+      "N": 2,
+      "rate": 0.0
+    },
+    "Autoimmunity": {
+      "N": 3,
+      "rate": 0.3333333333333333
+    },
+    "J Environ Public Health": {
+      "N": 1,
+      "rate": 0.0
+    },
+    "Gastroenterol Res Pract": {
+      "N": 1,
+      "rate": 1.0
+    },
+    "ScientificWorldJournal": {
+      "N": 3,
+      "rate": 0.0
+    }
+  },
+  "per_journal_scores": {
+    "Biomed Res Int": {
+      "N": 105,
+      "median": 0.001318445079959929,
+      "max": 0.9938578009605408,
+      "fpr": 0.047619047619047616
+    },
+    "Comput Math Methods Med": {
+      "N": 49,
+      "median": 0.0014023648109287024,
+      "max": 0.013708180747926235,
+      "fpr": 0.0
+    },
+    "Evid Based Complement Alternat Med": {
+      "N": 44,
+      "median": 0.0012724485713988543,
+      "max": 0.9933613538742065,
+      "fpr": 0.11363636363636363
+    },
+    "J Healthc Eng": {
+      "N": 35,
+      "median": 0.0014035245403647423,
+      "max": 0.002677926328033209,
+      "fpr": 0.0
+    },
+    "Contrast Media Mol Imaging": {
+      "N": 16,
+      "median": 0.0018785097636282444,
+      "max": 0.9952377080917358,
+      "fpr": 0.125
+    },
+    "Comput Intell Neurosci": {
+      "N": 21,
+      "median": 0.001894631888717413,
+      "max": 0.0031050131656229496,
+      "fpr": 0.0
+    },
+    "Oxid Med Cell Longev": {
+      "N": 6,
+      "median": 0.0011466344585642219,
+      "max": 0.0012701113009825349,
+      "fpr": 0.0
+    },
+    "Pacing Clin Electrophysiol": {
+      "N": 6,
+      "median": 0.0011689916718751192,
+      "max": 0.0015537063591182232,
+      "fpr": 0.0
+    },
+    "Emerg Med Int": {
+      "N": 4,
+      "median": 0.0012384355068206787,
+      "max": 0.0014645792543888092,
+      "fpr": 0.0
+    },
+    "Stem Cells Int": {
+      "N": 5,
+      "median": 0.0011754748411476612,
+      "max": 0.0012841790448874235,
+      "fpr": 0.0
+    },
+    "Bioinorg Chem Appl": {
+      "N": 2,
+      "median": 0.004423007369041443,
+      "max": 0.005741611123085022,
+      "fpr": 0.0
+    },
+    "Autoimmunity": {
+      "N": 3,
+      "median": 0.0010643110144883394,
+      "max": 0.0012481557205319405,
+      "fpr": 0.0
+    },
+    "J Environ Public Health": {
+      "N": 1,
+      "median": 0.0015292991884052753,
+      "max": 0.0015292991884052753,
+      "fpr": 0.0
+    },
+    "Gastroenterol Res Pract": {
+      "N": 1,
+      "median": 0.0012614399893209338,
+      "max": 0.0012614399893209338,
+      "fpr": 0.0
+    },
+    "ScientificWorldJournal": {
+      "N": 3,
+      "median": 0.0011483978014439344,
+      "max": 0.0012509318767115474,
+      "fpr": 0.0
+    }
+  },
+  "conclusion": "A",
+  "conclusion_reason": "Aggregate below threshold but subgroup effect detected (see warnings above)"
+}
