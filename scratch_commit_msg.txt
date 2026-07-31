@@ -1,6 +1,0 @@
-Merge Section 5.8 provenance-control and encoding-diagnostic investigation
-
-- Add provenance-matched negative construction, subgroup follow-up,
-  and tokenization-level diagnostic scripts
-- Add provenance_control_results.json and related model outputs
-- Update THESIS_CHAPTER.md with eight-diagnostic unresolved conclusion
