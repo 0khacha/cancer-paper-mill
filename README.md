@@ -102,7 +102,7 @@ Due to file size and licensing constraints, all raw source files (Retraction Wat
 To obtain the datasets:
 1.  Request access to the **Retraction Watch Database (RWDB)** directly via [Retraction Watch](https://retractionwatch.com/retraction-watch-database-user-guide/).
 2.  Save the CSV export to `data/raw/rwdb/retraction_watch.csv`.
-3.  Execute the reproduction pipeline to regenerate the final splits locally.
+3.  Execute the reproduction pipeline sequentially (Steps 1 through 3 in the Instructions above) to regenerate the final dataset splits locally.
 
 ---
 
