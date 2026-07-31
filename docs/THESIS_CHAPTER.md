@@ -2,7 +2,7 @@
 
 ## Résumé
 
-Ce chapitre présente une étude systématique sur la détection automatique des publications scientifiques frauduleuses issues d'usines à articles (*paper mills*) dans le domaine de l'oncologie. Pour ce faire, nous construisons le jeu de données CPM-11K, regroupant 11 106 articles cliniques et translationnels indexés dans la base de données Retraction Watch (RWDB) et MEDLINE/PubMed, et structurés de manière à éliminer les fuites de cibles (*label leakage*) et les biais temporels. Un protocole strict de division des données par regroupement d'auteurs et de titres (disjoint title-author clustering) est implémenté, résolvant un problème majeur de percolation des patronymes fréquents. Nous entraînons et comparons plusieurs configurations sémantiques et lexicales. 
+Ce chapitre présente une étude systématique sur la détection automatique des publications scientifiques frauduleuses issues d'usines à articles (*paper mills*) dans le domaine de l'oncologie. Pour ce faire, nous construisons le jeu de données CPM-11K, regroupant 11 106 articles cliniques et translationnels indexés dans la base de données Retraction Watch (RWDB) et MEDLINE/PubMed, et structurés de manière à éliminer les fuites de cibles (*label leakage*) et les biais temporels. Un protocole strict de division des données par regroupement d'auteurs et de titres disjoint est implémenté, résolvant un problème majeur de percolation des patronymes fréquents. Nous entraînons et comparons plusieurs configurations sémantiques et lexicales. 
 
 Notre modèle de référence, un classifieur linéaire robuste basé sur des sacs de mots pondérés (TF-IDF Combiné, $min\_df=5$, $C=10,0$), atteint une performance globale de premier ordre avec un score F1 global de 53,66 % et un ROC-AUC de 80,89 % sur l'ensemble de validation. Cependant, une évaluation stratifiée par éditeur révèle une asymétrie de performance majeure : alors que les articles frauduleux de Spandidos (caractérisés par des fraudes d'images grossières habillées de textes stéréotypés) sont détectés avec un F1 de 87,80 %, le modèle échoue face à une prédiction positive naïve sur le sous-ensemble éditorial Hindawi. Une analyse causale qualitative des motifs de rétractation et un test dose-réponse par rééchantillonnage bootstrap suggèrent que les fraudes basées sur la manipulation des processus éditoriaux (évaluation par les pairs biaisée, cartels de citations) ne laissent pas de signal lexical facilement extractible par les représentations testées dans les résumés. Ces résultats sont cohérents avec une évaluation finale sur un ensemble de test indépendant (ROC-AUC de 65,71 % sur Hindawi) et un ensemble de généralisation étanche Hindawi-Holdout de 1 504 articles (F1 de 40,63 % vs 44,39 % pour la baseline triviale, ROC-AUC de 64,47 %). Ce travail suggère les limites de l'analyse textuelle sémantique (au niveau des résumés) pour la détection de la fraude de processus, et ouvre la voie à des approches multi-modales intégrant les métadonnées de publication.
 
@@ -31,7 +31,7 @@ Pour l'apprentissage supervisé, nous avons construit le jeu de données Cancer 
 *Figure 2 : Parts relatives des principaux éditeurs au sein de la classe positive (paper mills) après application des filtres de purge.*
 
 ![Ratio global de déséquilibre des classes](figures/figure_5.png)
-*Figure 3 : Proportion globale des classes positive et négative au sein du jeu de données final CPM-11K (imbalance ratio de 1:4.26).*
+*Figure 3 : Proportion globale des classes positive et négative au sein du jeu de données final CPM-11K (ratio de déséquilibre de 1:4.26).*
 
 ### 1.2. Nettoyage et purge des données
 1.  **Label leakage :** Les mentions éditoriales de rétraction insérées a posteriori (ex. « *Retracted:* ») ont été éliminées par expressions régulières.
@@ -56,14 +56,14 @@ Pour empêcher que des articles issus d'une même campagne d'usines à articles 
 L'analyse de l'implémentation initiale du co-autorat (un seul auteur commun) a révélé un problème de percolation : un cluster unique regroupait 979 articles en raison de la prévalence de noms de famille chinois très fréquents (ex. *Wang*, *Zhang*). Ce problème a été résolu en **durcissant le critère à au moins 2 auteurs partagés en commun** pour lier deux documents.
 
 ### 2.3. Réserve étanche Hindawi et splits
-1.  **Hindawi-Holdout :** Un pool indépendant contenant 50 % des articles Hindawi (**429 positifs, 1 075 négatifs**) a été mis de côté avant toute analyse ou entraînement. Il sert exclusivement de validation externe hors-domaine.
-2.  **Splits Train / Validation / Test :** Les 9 602 articles restants ont été divisés à l'échelle des clusters disjoints selon le ratio 70/15/15 :
+1.  **Holdout Hindawi :** Un pool indépendant contenant 50 % des articles Hindawi (**429 positifs, 1 075 négatifs**) a été mis de côté avant toute analyse ou entraînement. Il sert exclusivement de validation externe hors-domaine.
+2.  **Splits Entraînement / Validation / Test :** Les 9 602 articles restants ont été divisés à l'échelle des clusters disjoints selon le ratio 70/15/15 :
     *   **Entraînement :** 6 722 articles (1 178 pos, 5 544 neg)
     *   **Validation :** 1 440 articles (252 pos, 1 188 neg)
     *   **Test :** 1 440 articles (252 pos, 1 188 neg)
 
 ![Partition split volumes](figures/figure_4.png)
-*Figure 5 : Répartition des volumes d'articles positifs et négatifs au sein des partitions d'entraînement, de validation et de test (le pool Hindawi-Holdout restant à part).*
+*Figure 5 : Répartition des volumes d'articles positifs et négatifs au sein des partitions d'entraînement, de validation et de test (le pool Holdout Hindawi restant à part).*
 
 ---
 
@@ -87,7 +87,7 @@ Les distributions des longueurs de résumés sont homogènes entre les classes (
 *Figure 6 : Histogrammes comparatifs des distributions de longueurs des résumés (mots et caractères) pour les classes positive (paper mills) et négative (littérature légitime).*
 
 ### 3.2. Biais lexicaux et d'éditeurs
-*   **Leakage textuel :** Les termes comme `retract` ou `withdraw` représentent moins de 0,35 % des occurrences. Les noms des éditeurs (`hindawi`, `spandidos`) sont absents des résumés, garantissant le nettoyage de la boilerplate.
+*   **Fuite textuelle :** Les termes comme `retract` ou `withdraw` représentent moins de 0,35 % des occurrences. Les noms des éditeurs (`hindawi`, `spandidos`) sont absents des résumés, garantissant le nettoyage du texte standardisé (boilerplate).
 *   **Analyse thématique locale :** L'extraction par ratio de log-cotes pondérées montre que les termes discriminants de la classe positive sont très spécifiques et diffèrent selon les éditeurs (ex. `efhd2` pour Hindawi, `mir-744` pour Spandidos, `hispidulin` pour les autres). La quasi-totalitÃ© de ces termes ont une fréquence de document extrêmement faible (DF < 10), suggérant la présence de gabarits locaux de campagnes de fraude plutôt qu'un signal sémantique généralisable.
 
 ---
@@ -138,7 +138,7 @@ Dix architectures distinctes ont été entraînées et comparées :
 1.  **Trivial Baseline (Prédiction positive constante) :** Un classifieur naïf prédisant systématiquement la classe positive pour tous les articles du corpus.
 2.  **TF-IDF Baseline (min_df=2, C=1.0) :** Représentation de n-grammes de mots (1 et 2) brute avec faible filtrage.
 3.  **TF-IDF Combiné (min_df=5, C=10.0) :** Notre modèle proposé combinant réduction de vocabulaire et régularisation ajustée.
-4.  **Character N-grams (char_wb 3-5, C=1.0) :** Modélisation par n-grammes de caractères de taille 3 à 5 à l'intérieur des limites de mots pour capturer les racines morphologiques (vocabulaire de 143 989 descripteurs).
+4.  **N-grammes de caractères (char_wb 3-5, C=1.0) :** Modélisation par n-grammes de caractères de taille 3 à 5 à l'intérieur des limites de mots pour capturer les racines morphologiques (vocabulaire de 143 989 descripteurs).
 5.  **Embeddings Généraux (all-MiniLM-L6-v2) [5, 6] :** Extraction de plongements sémantiques généraux de dimension 384 à partir du texte combiné (titre + résumé), suivie d'une régression logistique.
 6.  **Embeddings Biomédicaux (PubMedBERT gelé) [4] :** Extraction de plongements sémantiques spécialisés de dimension 768 à partir d'un modèle BERT pré-entraîné sur la littérature scientifique PubMed (`pritamdeka/S-PubMedBert-MS-MARCO`), suivie d'une régression logistique.
 7.  **SVM Linéaire (TF-IDF, min_df=5) :** Machine à vecteurs supports linéaire entraînée sur le même vocabulaire TF-IDF réduit que notre modèle combiné, avec pondération équilibrée des classes.
@@ -153,16 +153,16 @@ L'évaluation globale de ces modèles sur l'ensemble de validation (1 440 articl
 
 | Modèle | Précision | Rappel | F1 Global | ROC-AUC | PR-AUC |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Trivial Baseline** | 17,50% | **100,00%** | 29,79% | 50,00% | 17,50% |
-| **TF-IDF Baseline (min_df=2, C=1.0)** | 36,30% | 66,27% | 46,91% | 77,86% | 50,97% |
-| **TF-IDF Combiné (min_df=5, C=10.0)** | 47,83% | 61,11% | 53,66% | 80,89% | 54,99% |
-| **Character N-grams (char_wb 3-5)** | 51,66% | 43,25% | 47,08% | 78,21% | 50,65% |
-| **Embeddings Généraux (MiniLM)** | 33,33% | 48,81% | 39,61% | 69,28% | 32,08% |
-| **Embeddings Biomédicaux (PubMedBERT gelé)** | 39,09% | 54,76% | 45,62% | 78,22% | 43,92% |
-| **SVM Linéaire (TF-IDF, min_df=5)** | 47,52% | 60,71% | 53,31% | 80,83% | 55,24% |
-| **XGBoost (TF-IDF, min_df=5)** | 37,04% | 59,52% | 45,66% | 76,08% | 48,04% |
-| **PubMedBERT (fine-tuned)†** | **100,00%** | **100,00%** | **100,00%** | **100,00%** | **100,00%** |
-| **SciBERT (fine-tuned)†** | **100,00%** | **100,00%** | **100,00%** | **100,00%** | **100,00%** |
+| **Trivial Baseline** | 17,50% | **100,00%** | 29,79% [26,92% - 32,56%] | 50,00% [50,00% - 50,00%] | 17,50% |
+| **TF-IDF Baseline (min_df=2, C=1.0)** | 36,30% | 66,27% | 46,91% [42,10% - 51,45%] | 77,86% [74,64% - 80,97%] | 50,97% |
+| **TF-IDF Combiné (min_df=5, C=10.0)** | 47,83% | 61,11% | 53,66% [48,62% - 58,20%] | 80,89% [77,84% - 83,68%] | 54,99% |
+| **Character N-grams (char_wb 3-5)** | 51,66% | 43,25% | 47,08% [41,28% - 52,49%] | 78,21% [75,20% - 81,04%] | 50,65% |
+| **Embeddings Généraux (MiniLM)** | 33,33% | 48,81% | 39,61% [34,75% - 44,48%] | 69,28% [65,74% - 72,86%] | 32,08% |
+| **Embeddings Biomédicaux (PubMedBERT gelé)** | 39,09% | 54,76% | 45,62% [40,56% - 50,32%] | 78,22% [75,24% - 81,06%] | 43,92% |
+| **SVM Linéaire (TF-IDF, min_df=5)** | 47,52% | 60,71% | 53,31% [48,20% - 58,00%] | 80,83% [77,76% - 83,66%] | 55,24% |
+| **XGBoost (TF-IDF, min_df=5)** | 37,04% | 59,52% | 45,66% [40,88% - 50,42%] | 76,08% [72,63% - 79,29%] | 48,04% |
+| **PubMedBERT (fine-tuned)†** | **100,00%** | **100,00%** | **100,00% [100,00% - 100,00%]** | **100,00% [100,00% - 100,00%]** | **100,00%** |
+| **SciBERT (fine-tuned)†** | **100,00%** | **100,00%** | **100,00% [100,00% - 100,00%]** | **100,00% [100,00% - 100,00%]** | **100,00%** |
 
 *† Voir Section 5.8 pour une mise en garde critique concernant l'interprétation de ce résultat.*
 
@@ -171,7 +171,7 @@ L'évaluation globale de ces modèles sur l'ensemble de validation (1 440 articl
 
 #### Tableau comparatif stratifié par éditeur (Validation F1 / ROC-AUC)
 
-| Modèle | Spandidos F1 (ROC-AUC) | Pooled Others F1 (ROC-AUC) | Hindawi In-Pool F1 (ROC-AUC) |
+| Modèle | Spandidos F1 (ROC-AUC) | Autres (Regroupés) F1 (ROC-AUC) | Hindawi (In-Pool) F1 (ROC-AUC) |
 | :--- | :---: | :---: | :---: |
 | **Trivial Baseline** | 49,44% (50,00%) | 19,61% (50,00%) | 42,95% (50,00%) |
 | **TF-IDF Baseline** | 84,00% (96,26%) | 47,77% (93,49%) | 39,15% (61,20%) |
@@ -215,7 +215,7 @@ Ces résultats suggèrent une capacité d'apprentissage exceptionnelle des repr�
 Cette section présente l'analyse la plus critique de ce travail : l'étude de la divergence de performance selon les éditeurs, et plus particulièrement le cas du sous-ensemble Hindawi.
 
 > [!IMPORTANT]
-> **Clarification méthodologique essentielle :** Les analyses présentées dans cette section (évaluation, courbes et distributions) concernent exclusivement le sous-ensemble de validation interne **Hindawi In-Pool (134 positifs et 356 négatifs)** intégré dans le split principal de 1 440 articles. La réserve étanche de généralisation **Hindawi-Holdout (429 positifs et 1 075 négatifs)** est restée totalement inviolée et non évaluée à ce stade.
+> **Clarification méthodologique essentielle :** Les analyses présentées dans cette section (évaluation, courbes et distributions) concernent exclusivement le sous-ensemble de validation interne **Hindawi (In-Pool) (134 positifs et 356 négatifs)** intégré dans le split principal de 1 440 articles. La réserve étanche de généralisation **Holdout Hindawi (429 positifs et 1 075 négatifs)** est restée totalement inviolée et non évaluée à ce stade.
 
 ### 5.1. Échec de la modélisation textuelle sur Hindawi
 Lorsque l'on segmente les performances du modèle TF-IDF Combiné et qu'on les compare à la baseline triviale (« toujours prédire positif ») par éditeur sur l'ensemble de validation, un comportement anormal apparaît :
@@ -225,8 +225,8 @@ Lorsque l'on segmente les performances du modèle TF-IDF Combiné et qu'on les c
 | Éditeur | Taille de l'échantillon (Pos/Neg) | Baseline Triviale (F1) | TF-IDF Combiné (F1) | Verdict | ROC-AUC (TF-IDF) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Spandidos** | 22 / 45 [Volatile] | 49,44% | **87,80%** | **SURPASSE la baseline** | 96,97% |
-| **Pooled Others** | 96 / 787 | 19,61% | **60,00%** | **SURPASSE la baseline** | 93,10% |
-| **Hindawi In-Pool** | 134 / 356 | **42,95%** | 41,83% | **ÉCHOUE face à la baseline** | 63,27% |
+| **Autres (Regroupés)** | 96 / 787 | 19,61% | **60,00%** | **SURPASSE la baseline** | 93,10% |
+| **Hindawi (In-Pool)** | 134 / 356 | **42,95%** | 41,83% | **ÉCHOUE face à la baseline** | 63,27% |
 
 Alors que le modèle atteint d'excellents résultats sur Spandidos (F1 de 87,80% et AUC de 96,97%) et sur les autres éditeurs (F1 de 60,00% et AUC de 93,10%), **ses performances sur Hindawi s'effondrent à 41,83% de F1, perdant 1,12 point de pourcentage face à la baseline triviale (42,95%).**
 
@@ -301,14 +301,14 @@ Ces articles frauduleux ne décrivent pas des expériences in vitro / in vivo st
 La performance finale du modèle TF-IDF Combiné a été mesurée sur l'ensemble de test (`cancer_pm_test.json`), qui n'a été accédé qu'une seule fois. Il est important de préciser que le seuil de décision (0,36) a été gelé sur l'ensemble de validation avant d'accéder aux ensembles de test et de holdout, et qu'il n'a jamais été ré-ajusté par la suite. Au seuil ainsi figé de 0,36, les performances globales et par strate se structurent comme suit :
 
 *   **Métriques globales (Test) :** Précision = 44,05 %, Rappel = 54,37 %, F1 = 48,67 %, ROC-AUC = 79,59 %, PR-AUC = 54,70 %.
-*   **Hindawi-in-pool test subset ($N_{\text{pos}}=134$, $N_{\text{neg}}=357$) :** Précision = 42,86 %, Rappel = 33,58 %, F1 = 37,66 %, ROC-AUC = 65,71 %.
-*   **Spandidos-only test subset ($N_{\text{pos}}=18$, $N_{\text{neg}}=43$) [Petit échantillon] :** Précision = 92,86 %, Rappel = 72,22 %, F1 = 81,25 %, ROC-AUC = 98,06 %.
-*   **Pooled Others test subset ($N_{\text{pos}}=100$, $N_{\text{neg}}=788$) :** Précision = 41,15 %, Rappel = 79,00 %, F1 = 54,11 %, ROC-AUC = 89,44 %.
+*   **Sous-ensemble de test Hindawi (in-pool) ($N_{\text{pos}}=134$, $N_{\text{neg}}=357$) :** Précision = 42,86 %, Rappel = 33,58 %, F1 = 37,66 %, ROC-AUC = 65,71 %.
+*   **Sous-ensemble de test Spandidos ($N_{\text{pos}}=18$, $N_{\text{neg}}=43$) [Petit échantillon] :** Précision = 92,86 %, Rappel = 72,22 %, F1 = 81,25 %, ROC-AUC = 98,06 %.
+*   **Sous-ensemble de test Autres (regroupés) ($N_{\text{pos}}=100$, $N_{\text{neg}}=788$) :** Précision = 41,15 %, Rappel = 79,00 %, F1 = 54,11 %, ROC-AUC = 89,44 %.
 
 Une comparaison directe avec les résultats de validation montre une baisse modérée de F1 global de **−4,99 pp** (de 53,66 % à 48,67 %), tandis que les ROC-AUC restent extrêmement stables (chute de seulement −1,30 pp). Ce comportement montre une généralisation robuste de la capacité de tri du modèle, malgré une sensibilité de la frontière de décision à la variation des populations.
 
-### 5.6. Évaluation finale de généralisation : Hindawi Holdout (Phase 10)
-L'évaluation finale sur le pool de généralisation **Hindawi-Holdout** ($N_{\text{pos}}=429$ et $N_{\text{neg}}=1075$, non exposé tout au long du projet) fournit des indices importants concernant les limites documentaires du résumé :
+### 5.6. Évaluation finale de généralisation : Holdout Hindawi (Phase 10)
+L'évaluation finale sur le pool de généralisation **Holdout Hindawi** ($N_{\text{pos}}=429$ et $N_{\text{neg}}=1075$, non exposé tout au long du projet) fournit des indices importants concernant les limites documentaires du résumé :
 
 *   **Métriques du Holdout (seuil = 0,36) :** Précision = 46,41 %, Rappel = 36,13 %, F1 = 40,63 %, ROC-AUC = 64,47 %, PR-AUC = 41,24 %.
 *   **F1 Baseline Triviale (toujours positif) :** 44,39 %.
@@ -320,7 +320,7 @@ L'analyse de la distribution des probabilités sur ce holdout montre la superpos
 
 Bien que nos résultats indiquent l'absence de signal accessible aux représentations classiques testées (TF-IDF, n-grammes de caractères, embeddings sémantiques gelés) sur la strate Hindawi, cette absence de preuve ne constitue pas une preuve absolue d'absence. Plusieurs explications alternatives et limites méthodologiques doivent être soulignées pour interpréter ces résultats avec rigueur :
 
-1. **Manipulation systémique du processus éditorial (peer-review rings) :** Dans le cas d'Hindawi, les réseaux d'usines à articles ont massivement exploité la création de numéros spéciaux (*Special Issues*) en corrompant ou en plaçant des éditeurs invités complices. Parce que la validation académique des manuscrits était garantie par cette corruption administrative (les articles étant acceptés d'office par des complices), les usines à articles n'avaient aucune contrainte de standardisation lexicale ou d'habillage stylistique. Contrairement à Spandidos où les manuscrits devaient franchir un filtre éditorial standard et s'appuyaient donc sur des gabarits rédactionnels répétitifs, les manuscrits Hindawi pouvaient présenter une grande diversité lexicale et ressembler en tout point à des articles scientifiques authentiques.
+1. **Manipulation systémique du processus éditorial (réseaux d'évaluation par les pairs ou peer-review rings) :** Dans le cas d'Hindawi, les réseaux d'usines à articles ont massivement exploité la création de numéros spéciaux (*Special Issues*) en corrompant ou en plaçant des éditeurs invités complices. Parce que la validation académique des manuscrits était garantie par cette corruption administrative (les articles étant acceptés d'office par des complices), les usines à articles n'avaient aucune contrainte de standardisation lexicale ou d'habillage stylistique. Contrairement à Spandidos où les manuscrits devaient franchir un filtre éditorial standard et s'appuyaient donc sur des gabarits rédactionnels répétitifs, les manuscrits Hindawi pouvaient présenter une grande diversité lexicale et ressembler en tout point à des articles scientifiques authentiques.
 2. **Déficit d'information sémantique (modalité manquante) :** L'analyse sémantique basée uniquement sur le texte des résumés souffre d'un déficit d'information critique. La détection de la fraude éditoriale et de processus (comme les cartels de citations ou la manipulation d'évaluation par les pairs) nécessite des indicateurs non textuels. L'analyse des délais d'acceptation, les graphes de co-autorat ou les cartels de citations constituent des modalités d'analyse bien plus distinctives qui auraient permis d'identifier immédiatement ces anomalies, là où le texte seul s'avère insuffisant.
 
 ---
@@ -330,22 +330,22 @@ Bien que nos résultats indiquent l'absence de signal accessible aux représenta
 Le fait que PubMedBERT et SciBERT fine-tunés atteignent une performance parfaite ($100,00\%$ de F1 et de ROC-AUC) sur toutes les strates de validation, y compris le sous-ensemble Hindawi (où tous les modèles classiques plafonnent à $\sim 63-65\%$ d'AUC), exigeait une investigation rigoureuse. Afin d'écarter l'hypothèse d'un bug de fuite de données ou de mémorisation superficielle, nous avons mené six tests diagnostiques approfondis :
 
 1. **Généralisation sur Holdout Externe :** Nous avons évalué le modèle PubMedBERT fine-tuné (époque 1) sur le jeu de données externe et étanche `cancer_pm_holdout.json` ($N = 1\,504$ articles Hindawi, mis de côté avant partitionnement et resté totalement isolé). Le modèle obtient un score réel exceptionnel de **AUC = 99,88%** et **F1 = 99,06%** (Précision = 100,00%, Rappel = 98,14%). Cela prouve que le modèle a appris des caractéristiques généralisables à l'ensemble du domaine et que la performance n'est pas le produit d'une fuite train/val. Une évaluation sur le jeu de test indépendant (`cancer_pm_test.json`) affirme également un **AUC de 100,00%**.
-2. **Audit de non-leakage et distribution des proximités (Hindawi-Holdout) :** Bien que l'ensemble Hindawi-Holdout ait été extrait par partitionnement stratifié temporel avant l'étape de clustering disjoint des co-auteurs et des titres (Section 2.3), nous avons audité la proximité textuelle entre les 429 positifs Hindawi du Holdout et les 157 positifs Hindawi d'Entraînement. Nous avons mesuré la similarité 3-grammes de titre Jaccard et la similarité cosinus TF-IDF (mots unigrammes et bigrammes) sur titre+résumé pour chaque paire :
+2. **Audit de non-leakage et distribution des proximités (Holdout Hindawi) :** Bien que l'ensemble Holdout Hindawi ait été extrait par partitionnement stratifié temporel avant l'étape de clustering disjoint des co-auteurs et des titres (Section 2.3), nous avons audité la proximité textuelle entre les 429 positifs Hindawi du Holdout et les 157 positifs Hindawi d'Entraînement. Nous avons mesuré la similarité 3-grammes de titre Jaccard et la similarité cosinus TF-IDF (mots unigrammes et bigrammes) sur titre+résumé pour chaque paire :
    * **Distribution Jaccard (Titre) :** L'écrasante majorité des articles présente des proximités très faibles : $22,14\%$ des articles se situent dans la tranche $[0,1 - 0,2)$, $63,64\%$ dans la tranche $[0,2 - 0,3)$, et $12,82\%$ dans la tranche $[0,3 - 0,4)$. Seuls $1,17\%$ (soit 5 articles) atteignent la classe $[0,4 - 0,5)$, et aucun article ne dépasse la valeur de $0,47$ (Zéro doublon au-dessus du seuil standard de $0,70$).
    * **Distribution cosinus TF-IDF (Titre+Résumé) :** $38,23\%$ des articles se situent dans la tranche $[0,1 - 0,2)$, $51,28\%$ dans la tranche $[0,2 - 0,3)$, $8,62\%$ dans la tranche $[0,3 - 0,4)$, $1,17\%$ dans la tranche $[0,4 - 0,5)$ et seulement $0,47\%$ (2 articles) dans la tranche $[0,5 - 0,6)$. Aucun article ne dépasse une similarité de $0,591$ (Zéro doublon au-dessus de $0,70$).
    Ces distributions, centrées sur une faible similarité lexicale baseline (médiane à $\sim 0,21 - 0,23$), démontrent qu'il n'existe pas de familles d'articles à squelette syntaxique cloné ou de variations par substitution d'entités chimiques/biologiques (*entity-swapping templates*) à cheval entre les partitions de test et d'entraînement.
-3. **Absence de biais éditorial sur les contrôles négatifs (Journal Skew Check) :** Nous avons comparé la distribution par revue des $1\,075$ contrôles négatifs de la partition Holdout Hindawi et des $1\,069$ contrôles négatifs du pool principal ( Train/Val/Test). Les deux populations présentent une composition quasi identique : `BioMed Research International` représente $37,67\%$ du Holdout vs $39,20\%$ du pool, `CMMM` représente $13,49\%$ vs $13,66\%$, et `Evidence-Based Complementary` représente $16,19\%$ vs $15,06\%$. L'écart maximal (skew) observé toutes revues confondues n'étant que de $1,52\%$, cela exclut l'hypothèse d'une classification opportuniste basée sur des signatures d'éditeurs ou une répartition asymétrique de revues spécifiques.
+3. **Absence de biais éditorial sur les contrôles négatifs (Vérification des biais éditoriaux) :** Nous avons comparé la distribution par revue des $1\,075$ contrôles négatifs de la partition Holdout Hindawi et des $1\,069$ contrôles négatifs du pool principal ( Train/Val/Test). Les deux populations présentent une composition quasi identique : `BioMed Research International` représente $37,67\%$ du Holdout vs $39,20\%$ du pool, `CMMM` représente $13,49\%$ vs $13,66\%$, et `Evidence-Based Complementary` représente $16,19\%$ vs $15,06\%$. L'écart maximal (skew) observé toutes revues confondues n'étant que de $1,52\%$, cela exclut l'hypothèse d'une classification opportuniste basée sur des signatures d'éditeurs ou une répartition asymétrique de revues spécifiques.
 4. **Séparation nette dans l'espace des scores (Sous-groupe B) :** Pour confirmer que la performance parfaite (AUC de $100,00\%$) obtenue sur le Sous-groupe B ($52$ cas de fraudes purement administratives sans indicateur de génération par IA) n'est pas un artefact statistique dû à la taille de l'échantillon, nous avons inspecté les probabilités individuelles de classification (probabilité prédite après application de la fonction sigmoïde) face aux $356$ contrôles négatifs Hindawi :
    * **Positifs du Sous-groupe B ($N=52$) :** Score minimal = **$0,89102298$**, Score maximal = $0,99525672$, Score médian = $0,99127901$.
    * **Contrôles sains Hindawi ($N=356$) :** Score minimal = $0,00095159$, Score maximal = **$0,00631157$**, Score médian = $0,00149582$.
-   * **Marge de séparation (Separation Gap) :** **$+0,88471138$**.
+   * **Marge de séparation :** **$+0,88471138$**.
    Il existe une déconnexion totale des distributions sans aucun chevauchement, garantissant une classification parfaite et robuste quel que soit le seuil choisi dans cet intervalle.
-5. **Test de Permutation des Labels (Label-Permutation Sanity Check) :** Nous avons ré-entraîné le modèle PubMedBERT sous un protocole de fine-tuning identique mais en associant à chaque document d'entraînement une étiquette factice générée par permutation aléatoire (désaxant la corrélation avec l'étiquette réelle à seulement $0,0188$). Évalué sur les données de validation, de test et de holdout externe, le modèle obtient respectivement des scores de **AUC = 46,95%**, **AUC = 44,96%** et **AUC = 47,38%**. Ce retour à l'aléa strict ($\sim 50\%$) écarte définitivement l'hypothèse d'une fuite de cibles passive ou de canaux cachés (leakage de métadonnées, doublons géométriques, ou ID internes) au sein de nos pipelines.
+5. **Vérification par permutation des labels :** Nous avons ré-entraîné le modèle PubMedBERT sous un protocole de fine-tuning identique mais en associant à chaque document d'entraînement une étiquette factice générée par permutation aléatoire (désaxant la corrélation avec l'étiquette réelle à seulement $0,0188$). Évalué sur les données de validation, de test et de holdout externe, le modèle obtient respectivement des scores de **AUC = 46,95%**, **AUC = 44,96%** et **AUC = 47,38%**. Ce retour à l'aléa strict ($\sim 50\%$) écarte définitivement l'hypothèse d'une fuite de cibles passive ou de canaux cachés (leakage de métadonnées, doublons géométriques, ou ID internes) au sein de nos pipelines.
 6. **Analyse des artefacts positionnels :** L'inspection visuelle des entrées tokenisées brutes confirme que le texte d'entrée est vierge de tout identifiant (PMID, DOI, éditeur), de balises XML/HTML résiduelles, ou d'indications de labellisation. Le modèle opère uniquement sur le texte du titre et du résumé.
 7. **Shuffling au niveau des mots vs. des phrases et Analyse d'Attribution :** 
-   * *Mélange au niveau des mots (Word Shuffling) :* Lorsque l'ordre des mots est entièrement mélangé (détruisant la syntaxe locale mais préservant le sac de mots), l'AUC s'effondre à **67,55%** (rejoignant le plafond des modèles classiques).
-   * *Mélange au niveau des phrases (Sentence Shuffling) :* Lorsque nous mélangeons l'ordre des phrases au sein du résumé tout en conservant la structure interne et la grammaire locale de chaque phrase, l'AUC reste presque inchangée à **98,37%** (pour PubMedBERT) et **99,83%** (pour SciBERT).
-   * *Direct Attribution (Leave-One-Out) et Quantification :* Un test d'attribution par omission et par fenêtre glissante sur les vrais positifs du Sous-groupe B a permis d'isoler les marqueurs textuels initiant les prédictions positives fortes ($P \approx 1,0$). Nous avons ensuite quantifié de manière systématique la prévalence de ces signatures à l'aide de filtres par expressions régulières sur l'ensemble des jeux :
+   * *Mélange des mots (Word Shuffling) :* Lorsque l'ordre des mots est entièrement mélangé (détruisant la syntaxe locale mais préservant le sac de mots), l'AUC s'effondre à **67,55%** (rejoignant le plafond des modèles classiques).
+   * *Mélange des phrases (Sentence Shuffling) :* Lorsque nous mélangeons l'ordre des phrases au sein du résumé tout en conservant la structure interne et la grammaire locale de chaque phrase, l'AUC reste presque inchangée à **98,37%** (pour PubMedBERT) et **99,83%** (pour SciBERT).
+   * *Attribution directe (Leave-One-Out) et Quantification :* Un test d'attribution par omission et par fenêtre glissante sur les vrais positifs du Sous-groupe B a permis d'isoler les marqueurs textuels initiant les prédictions positives fortes ($P \approx 1,0$). Nous avons ensuite quantifié de manière systématique la prévalence de ces signatures à l'aide de filtres par expressions régulières sur l'ensemble des jeux :
      1. *Les transitions structurelles d'assemblage ou d'extraction automatisée (concaténation d'en-têtes de sections) :* Nous avons détecté la présence d'en-têtes (ex. `METHODS:`, `RESULTS:`, `CONCLUSION:`) concaténés à l'intérieur du texte sans retour à la ligne ni ponctuation de fin de phrase correcte (ex. `100 RESULT:`, `pathway. METHOD:`, `metadherin ( CONCLUSION:`). Cette signature de formatage automatisé est présente dans **63,46%** du Sous-groupe B (33 sur 52) et **43,82%** de l'ensemble des positifs Hindawi du Holdout (188 sur 429). En comparaison, ce taux est significativement plus faible dans les jeux de contrôle négatifs sains (26,40% dans la validation Hindawi et 27,44% dans le holdout Hindawi). Bien que ce motif de concaténation inline soit en partie induit par les scripts de conversion XML/Abstract de Hindawi (présent chez $\approx 26-28\%$ des négatifs sains), sa forte surreprésentation chez les positifs (jusqu'à 63,46%) en fait un canal discriminant exploité par le transformeur.
      2. *Les tournures types de squelettes de phrases maladroites :* Les tournures automatisées spécifiques repérées lors de l'audit (ex. `attempted to clarify... on carcinogenic and development`, ou `belongs to a type of the most deadly`) ne concernent que **3,85%** du Sous-groupe B (2 sur 52) et co-occurrent systématiquement avec le premier artefact de concaténation (3,85% d'overlap).
       3. *Détection résiduelle :* De manière révélatrice, **36,54%** des cas du Sous-groupe B (19 sur 52) et **56,18%** de l'ensemble des positifs Hindawi du Holdout (241 sur 429) ne contiennent **ni** l'artefact de concaténation sans ponctuation, **ni** les tournures maladroites précitées. Pourtant, le transformeur fine-tuné les classe correctement avec une probabilité quasi-certaine ($P > 99\%$). Savoir si ce résidu s'explique par l'apprentissage de caractéristiques stylistiques et sémantiques diffuses de la fraude ou par un autre artefact structurel encore non identifié (par exemple des anomalies d'espacement des références bibliographiques ou des structures de ponctuation spécifiques) reste une question ouverte pour de futurs travaux. Cette observation est ainsi cohérente avec l'hypothèse que le transformeur ne se limite pas à surapprendre ces deux anomalies évidentes de surface, mais s'adapte à un ensemble composite de signaux.
@@ -365,20 +365,28 @@ En revanche, le **fine-tuning de bout en bout** réoriente les mécanismes d'att
 
 ---
 
-## 6. Perspectives et Travaux Futurs
+## 6. Considérations Éthiques et Limites de Déploiement
+
+Le déploiement d'un tel système de détection dans un environnement éditorial réel soulève un enjeu éthique majeur lié au coût d'un faux positif. L'analyse des erreurs (Section 5.4A) a démontré que le modèle peut surapprendre certaines corrélations lexicales légitimes, telles que la terminologie propre à la biologie moléculaire des ARN non-codants (micro-ARN, LncRNA). En conséquence, le système risque d'assimiler par erreur des recherches légitimes et rigoureuses à de la fraude simplement parce qu'elles partagent des caractéristiques thématiques avec les gabarits préfabriqués des usines à articles.
+
+Le coût humain et professionnel d'une telle erreur est dévastateur : le travail intègre d'un chercheur pourrait être injustement rejeté, ou pire, publiquement accusé de fraude. Les performances finales mesurées sur l'ensemble de test (précision globale de 44,05 %) indiquent clairement que, dans un scénario de production, plus de la moitié des alertes positives générées par le modèle s'avéreront être de fausses alarmes. Par conséquent, ce modèle ne doit en aucun cas être utilisé comme un outil de décision autonome pour rejeter des manuscrits ou publier automatiquement des rétractations. Il est conçu exclusivement comme un instrument de **triage** visant à alerter et orienter l'effort d'une investigation éditoriale humaine qualifiée. Toute intégration opérationnelle devra nécessairement s'accompagner d'une capacité humaine de révision proportionnée au volume d'alertes générées.
+
+---
+
+## 7. Perspectives et Travaux Futurs
 
 L'évaluation a mis en évidence une limite fondamentale des approches purement textuelles : sur certains éditeurs (notamment Hindawi), les articles frauduleux sont textuellement indifférenciables des articles légitimes au niveau des résumés. La fraude s'est matérialisée dans les processus éditoriaux et académiques externes plutôt que dans le contenu rédactionnel. 
 
 Cette section présente trois architectures de détection basées sur des métadonnées non textuelles, conçues comme des pistes de travaux futurs pour dépasser ce plafond de performance, en évaluant de manière réaliste les coûts d'acquisition de données et les verrous techniques associés.
 
-### 6.1. Analyse des délais de relecture éditoriale (Peer-Review Timelines)
+### 7.1. Analyse des délais de relecture éditoriale (Peer-Review Timelines)
 Les réseaux de fraude à l'évaluation par les pairs (*peer-review rings*) reposent sur un contournement du processus de relecture. Le relecteur complice (souvent contrôlé par l'usine à articles elle-même) accepte l'article immédiatement sans modifications majeures. 
 *   **Hypothèse :** Un délai inhabituellement court entre la soumission, les révisions successives et l'acceptation finale de l'article est corrélé positivement avec une probabilité élevée de rétraction pour évaluation compromise.
 *   **Besoins en Données et Faisabilité technique :**
     *   *Données requises :* Dates de soumission (`Received`), de révision (`Revised`) et d'acceptation (`Accepted`).
     *   *Coût d'acquisition :* **TRÈS ÉLEVÉ.** La base de données Retraction Watch (RWDB) ne contient que la date de publication originale et la date de rétraction. Elle ne contient aucune date intermédiaire du cycle éditorial. La base PubMed fournit parfois ces dates dans l'historique XML pour certains éditeurs, mais la couverture est incomplète et incohérente. L'acquisition nécessite le développement de scrapers Web spécifiques pour chaque éditeur afin d'extraire ces dates directement depuis les pages HTML ou les PDF des articles, ce qui représente un coût d'ingénierie et de maintenance substantiel en raison des changements fréquents de mise en page des sites d'éditeurs.
 
-### 6.2. Analyse des réseaux de co-autorat (Co-authorship Graphs)
+### 7.2. Analyse des réseaux de co-autorat (Co-authorship Graphs)
 Les usines à articles vendent des places d'auteurs (souvent des positions de co-auteurs secondaires) à des chercheurs cherchant à augmenter artificiellement leur production académique. Cela crée des associations d'auteurs hautement inhabituelles et déconnectées de la géographie ou de la discipline.
 *   **Graphique cible :** Un graphe biparti Auteurs-Articles, projeté ensuite sous forme de graphe de co-autorat où les nœuds sont les auteurs et les arêtes représentent les co-publications.
 *   **Mesures de détection :** Détection de communautés (ex. Louvain), coefficient de clustering local anormalement élevé pour des auteurs sans liens institutionnels communs, ou densité anormale de relations d'évaluation complices.
@@ -386,7 +394,7 @@ Les usines à articles vendent des places d'auteurs (souvent des positions de co
     *   *Données requises :* Liste complète et unique des auteurs par article.
     *   *Coût d'acquisition :* **ÉLEVÉ (Verrou de la désambiguïsation).** RWDB fournit les noms d'auteurs sous forme de chaînes brutes non structurées (ex: "Zhang, Y.; Wang, L."), sans identifiant unique. L'utilisation de chaînes brutes introduit un bruit colossal en raison des homonymes très fréquents. L'intégration nécessite l'interrogation d'APIs tierces comme ORCID, OpenAlex ou Scopus Author ID pour associer chaque nom à un identifiant unique. Ce processus de désambiguïsation automatique est complexe à fiabiliser à grande échelle, représentant un coût de nettoyage de données majeur.
 
-### 6.3. Analyse des mismatchs de réseaux de citations (Citation Cartels)
+### 7.3. Analyse des réseaux de citations (Citation Cartels)
 Les usines à articles gonflent l'impact de leurs productions en créant des réseaux de citation réciproque (*citation cartels*) ou en insérant des citations totalement hors-contexte dans des articles complices pour satisfaire les demandes de clients ou d'éditeurs corrompus (fraude aux citations).
 *   **Hypothèse :** Les articles issus d'usines à articles présentent une déconnexion sémantique entre le contenu du paragraphe de citation et l'article cité, ainsi qu'une structure de graphe de citation fermée (boucles de citations croisées anormalement denses).
 *   **Besoins en Données et Faisabilité technique :**
@@ -395,7 +403,7 @@ Les usines à articles gonflent l'impact de leurs productions en créant des ré
 
 ---
 
-## Conclusion du Chapitre
+## 8. Conclusion du Chapitre
 
 Ce chapitre a présenté une méthodologie rigoureuse pour la détection automatique des usines à articles dans la littérature oncologique. La construction du jeu de données CPM-11K (11 106 articles stables) a permis de jeter des bases solides pour l'apprentissage supervisé, en nettoyant les textes de tout label leakage et en s'immunisant contre les biais d'appariement thématique grâce à une recherche par journal, année et validation lexicale locale.
 
@@ -405,7 +413,7 @@ Sur le plan de la modélisation, le modèle **TF-IDF Combiné (min_df=5, C=10.0)
 
 L'analyse causale par motifs de rétractation et tests dose-réponse bootstrap suggère que cet échec n'est pas uniquement attribuable à l'outil linguistique employé, mais plutôt à la nature même de la fraude. Les fraudes de processus (évaluation par les pairs biaisée, manipulation de citations) n'altèrent pas le contenu rédactionnel des résumés de manière évidente pour les modèles testés. Par conséquent, la détection des paper mills ne pourra probablement pas reposer uniquement sur l'analyse textuelle des seuls résumés à l'avenir. Une approche robuste de détection à grande échelle gagnera à combiner l'analyse lexicale avec des modèles multi-modaux exploitant les métadonnées de processus (délais d'acceptation, graphes de co-autorat et structures de citation).
 
----
+
 
 ## Annexes
 
