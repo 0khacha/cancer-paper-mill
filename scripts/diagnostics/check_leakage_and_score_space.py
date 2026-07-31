@@ -10,8 +10,10 @@ from torch.utils.data import DataLoader, Dataset
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+import os
 # Redirect output to file
-output_path = r"C:\projects\cancer-paper-mill\leakage_check_results.txt"
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+output_path = os.path.join(project_root, "leakage_check_results.txt")
 sys.stdout = open(output_path, "w", encoding="utf-8")
 sys.stderr = sys.stdout
 

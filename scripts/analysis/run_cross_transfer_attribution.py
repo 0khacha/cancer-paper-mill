@@ -7,8 +7,10 @@ from transformers import AutoTokenizer, AutoModel
 
 sys.stdout.reconfigure(encoding='utf-8')
 
+import os
 # Redirect output to file
-output_path = r"C:\projects\cancer-paper-mill\cross_transfer_attribution.txt"
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+output_path = os.path.join(project_root, "cross_transfer_attribution.txt")
 sys.stdout = open(output_path, "w", encoding="utf-8")
 sys.stderr = sys.stdout
 
