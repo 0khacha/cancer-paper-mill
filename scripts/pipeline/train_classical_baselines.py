@@ -2,7 +2,6 @@ import json
 import os
 import sys
 import numpy as np
-import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score, average_precision_score

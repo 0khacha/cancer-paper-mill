@@ -4,7 +4,6 @@ import os
 import html
 import unicodedata
 import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 

@@ -16,8 +16,6 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 
 import json
 import csv
-import urllib.request
-import urllib.parse
 import random
 from collections import Counter
 

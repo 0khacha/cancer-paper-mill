@@ -18,11 +18,8 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 import csv
 import json
 import time
-import urllib.request
-import urllib.parse
 import random
 import re
-from collections import defaultdict, Counter
 
 sys.stdout.reconfigure(encoding='utf-8')
 csv.field_size_limit(sys.maxsize)

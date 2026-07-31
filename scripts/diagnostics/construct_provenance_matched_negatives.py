@@ -23,8 +23,6 @@ import json
 import csv
 import time
 import re
-import urllib.request
-import urllib.parse
 import xml.etree.ElementTree as ET
 import random
 from collections import defaultdict, Counter

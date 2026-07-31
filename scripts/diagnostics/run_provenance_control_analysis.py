@@ -22,7 +22,6 @@ import os
 import sys
 import csv
 import numpy as np
-from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))

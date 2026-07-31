@@ -6,7 +6,6 @@ import random
 import torch
 import torch.nn as nn
 import numpy as np
-import pandas as pd
 from torch.amp import GradScaler, autocast
 from torch.utils.data import DataLoader, Dataset
 from transformers import AutoTokenizer, AutoModel, get_linear_schedule_with_warmup

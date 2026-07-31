@@ -11,7 +11,6 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 
 import json
 import csv
-import shutil
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import Counter

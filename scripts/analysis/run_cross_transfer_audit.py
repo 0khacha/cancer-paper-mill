@@ -1,7 +1,6 @@
 import json
 import csv
 import sys
-import os
 import re
 
 sys.stdout.reconfigure(encoding='utf-8')
