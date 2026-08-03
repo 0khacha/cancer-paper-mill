@@ -116,7 +116,7 @@ Evaluated once at project end (§5.6), threshold frozen at 0.36. Source: `THESIS
 
 **McNemar's test + 95% bootstrap ΔF1 confidence intervals** comparing each model against **TF-IDF Combiné (min_df=5, C=10.0)** as the reference. Computed on the **global validation set** (N=1,440). Source: `results/significance_results.json`, keys `mcnemar` and `bootstrap_ci`. The sign convention in the JSON is described in thesis §4.3 prose (lines 195–198): for the classical/frozen models, a positive bootstrap mean means TF-IDF Combiné outperforms the compared model; for the fine-tuned models, a positive mean means the fine-tuned model slightly outperforms TF-IDF Combiné.
 
-| Compared model | McNemar χ² | p-value | Direction | |ΔF1| mean | 95% CI |
+| Compared model | McNemar χ² | p-value | Direction | \|ΔF1\| mean | 95% CI |
 |---|---|---|---|---|---|
 | TF-IDF Baseline (min_df=2, C=1.0) | 67.70 | 1.9 × 10⁻¹⁶ | Combiné wins | 6.82 pp | [3.64 pp, 10.03 pp] |
 | Character N-grams | 2.45 | 0.117 | Combiné wins | 6.60 pp | [2.04 pp, 11.20 pp] |
