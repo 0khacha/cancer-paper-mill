@@ -18,7 +18,7 @@ Text-based detection (titles + abstracts) works extremely well against **content
 
 All ten trained models evaluated on the held-aside validation partition. Decision threshold selected on validation by sweeping [0.1, 0.9), then frozen. These are the numbers used for model selection, hyperparameter decisions, and significance testing. Source: `docs/THESIS_CHAPTER.md` §4.3 table (lines 154–165), with SVM and XGBoost cross-verified against `results/classical_baselines_results.json`, TF-IDF Combiné cross-verified against `results/tfidf_combined_results.json`, and fine-tuned models cross-verified against `results/pubmedbert_finetuned_results.json` / `results/scibert_finetuned_results.json`.
 
-> **Note on TF-IDF Combiné reproducibility:** There is no committed original training script for TF-IDF Combiné in this repository (it was likely trained in a local notebook). However, downstream scripts that reload or retrain the model for significance testing and plotting all explicitly use `class_weight="balanced"`. When this inferred configuration is incorporated into the reproducible evaluation script (`scripts/eval/eval_tfidf_combined.py`), it yields an optimal validation threshold of 0.36 and perfectly reproduces every global and stratified metric for the validation, test, and holdout sets reported in the thesis (Δ=0.0000 across all 18 metrics).
+> **Note on TF-IDF Combiné reproducibility:** No original training script for TF-IDF Combiné survives in this repository. Its configuration (`class_weight="balanced"`, `min_df=5`, `C=10.0`) was inferred by searching for the setting that reproduces the previously-published metrics, after confirming via exhaustive search that no other tested variant (text-assembly, n-gram range, or C value) reproduces the same threshold. This is circumstantial support for, not independent verification of, the original configuration. The reconstructed script (`scripts/train/train_tfidf_combined.py`) reproduces all 18 published metrics exactly (Δ=0.0000) and is now the canonical training pipeline going forward.
 
 #### Global Metrics
 
@@ -61,7 +61,7 @@ Source: `THESIS_CHAPTER.md` §4.3 lines 174–182 for rows without a JSON file; 
 
 ### Test Set (N = 1,440 · 252 pos / 1,188 neg · one-time access, threshold frozen at 0.36)
 
-The final test partition was accessed only once, after all model selection was finalized. Only the three thesis reference models were evaluated in the original one-time run (§5.5). Source: `THESIS_CHAPTER.md` §5.5 table, lines 300–302 for PubMedBERT and SciBERT. TF-IDF Combiné test-set metrics are now independently verifiable via `results/tfidf_combined_results.json → test.overall` and `test.stratified`.
+The final test partition was accessed only once, after all model selection was finalized. Only the three thesis reference models were evaluated in the original one-time run (§5.5). Source: `THESIS_CHAPTER.md` §5.5 table, lines 300–302 for PubMedBERT and SciBERT. The TF-IDF Combiné test-set metrics presented below are produced by a reconstructed training pipeline inferred by matching validation metrics, rather than an independently verified original script (`results/tfidf_combined_results.json`).
 
 #### Global Metrics
 
@@ -87,7 +87,7 @@ Source: `THESIS_CHAPTER.md` §5.5 table, lines 300–302.
 
 ### Hindawi Holdout Generalization (N = 1,504 · 429 pos / 1,075 neg · fully withheld)
 
-Evaluated once at project end (§5.6), threshold frozen at 0.36. Source: `THESIS_CHAPTER.md` §5.6 prose, lines 310–313 for PubMedBERT and SciBERT. TF-IDF Combiné holdout metrics are now independently verifiable via `results/tfidf_combined_results.json → holdout.overall`.
+Evaluated once at project end (§5.6), threshold frozen at 0.36. Source: `THESIS_CHAPTER.md` §5.6 prose, lines 310–313 for PubMedBERT and SciBERT. The TF-IDF Combiné holdout metrics presented below are produced by a reconstructed training pipeline inferred by matching validation metrics, rather than an independently verified original script (`results/tfidf_combined_results.json`).
 
 | Model | Precision | Recall | F1 | AUC |
 |---|---|---|---|---|
@@ -181,6 +181,8 @@ python scripts/data_build/normalize_abstracts.py   # Strip trailing-period forma
 
 ### Stage 2 — Train Models (`scripts/train/`)
 
+*Note: The TF-IDF Combiné configuration was inferred by matching previously-published results; it is not independently verified against a recovered original script.*
+
 ```bash
 python scripts/train/train_classical_baselines.py  # SVM + XGBoost on TF-IDF features
 python scripts/train/finetune_pubmedbert.py        # Fine-tune microsoft/BiomedNLP-BiomedBERT-base
@@ -188,6 +190,9 @@ python scripts/train/finetune_scibert.py           # Fine-tune allenai/scibert_s
 ```
 
 ### Stage 3 — Evaluate (`scripts/eval/`)
+
+> [!WARNING]
+> This configuration was inferred by matching previously-published results; it is not independently verified against a recovered original script.
 
 ```bash
 python scripts/eval/evaluate_all_models.py         # Full evaluation with publisher-stratified breakdown

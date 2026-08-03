@@ -164,15 +164,12 @@ def main():
     def labels(recs):
         return np.array([int(r["label"]) for r in recs])
 
-    # 3. Fit vectoriser + model on train
-    print("\nFitting TF-IDF vectoriser (ngram_range=(1,2), min_df=5, sublinear_tf=True)...")
-    vec = TfidfVectorizer(ngram_range=(1, 2), min_df=5, sublinear_tf=True)
-    X_train = vec.fit_transform(texts(splits["train"]))
-    print(f"  Vocabulary size: {len(vec.vocabulary_):,} features")
-
-    print("Training LogisticRegression (C=10.0, class_weight='balanced', max_iter=1000)...")
-    clf = LogisticRegression(C=10.0, class_weight="balanced", max_iter=1000, random_state=42, solver="lbfgs")
-    clf.fit(X_train, labels(splits["train"]))
+    # 3. Load pre-trained vectoriser + model
+    import joblib
+    print("\nLoading pre-trained TF-IDF vectoriser and LogisticRegression model...")
+    model_data = joblib.load("models/tfidf_combined.joblib")
+    vec = model_data["vectorizer"]
+    clf = model_data["classifier"]
 
     # 4. Validation — find optimal threshold
     print("\n--- Validation set (threshold optimisation) ---")

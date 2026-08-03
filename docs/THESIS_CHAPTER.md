@@ -137,7 +137,7 @@ Pour examiner le comportement de régularisation après filtrage du vocabulaire 
 Dix architectures distinctes ont été entraînées et comparées :
 1.  **Trivial Baseline (Prédiction positive constante) :** Un classifieur naïf prédisant systématiquement la classe positive pour tous les articles du corpus.
 2.  **TF-IDF Baseline (min_df=2, C=1.0) :** Représentation de n-grammes de mots (1 et 2) brute avec faible filtrage.
-3.  **TF-IDF Combiné (min_df=5, C=10.0) :** Notre modèle proposé combinant réduction de vocabulaire et régularisation ajustée.
+3.  **TF-IDF Combiné (min_df=5, C=10.0, class_weight='balanced') :** Notre modèle proposé combinant réduction de vocabulaire et régularisation ajustée. *(Note de reproductibilité : Cette configuration a été reconstruite par alignement sur les métriques de validation publiées. Ceci constitue un support circonstanciel de la configuration d'origine, et non une vérification indépendante de celle-ci.)*
 4.  **N-grammes de caractères (char_wb 3-5, C=1.0) :** Modélisation par n-grammes de caractères de taille 3 à 5 à l'intérieur des limites de mots pour capturer les racines morphologiques (vocabulaire de 143 989 descripteurs).
 5.  **Embeddings Généraux (all-MiniLM-L6-v2) [5, 6] :** Extraction de plongements sémantiques généraux de dimension 384 à partir du texte combiné (titre + résumé), suivie d'une régression logistique.
 6.  **Embeddings Biomédicaux (PubMedBERT gelé) [4] :** Extraction de plongements sémantiques spécialisés de dimension 768 à partir d'un modèle BERT pré-entraîné sur la littérature scientifique PubMed (`pritamdeka/S-PubMedBert-MS-MARCO`), suivie d'une régression logistique.
