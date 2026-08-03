@@ -24,13 +24,13 @@ Pour l'apprentissage supervisé, nous avons construit le jeu de données Cancer 
 *   **Classe positive (Paper Mills) :** Extraite de la base Retraction Watch Database (RWDB) [1] pour le sujet « *cancer* », puis récupérée via APIs PubMed/Crossref sous sa forme originale (avant rétraction).
 *   **Classe négative (Contrôles sains) :** Appariée thématiquement pour chaque cas positif dans le même journal et la même année ($± 1$ an). La recherche PubMed [2] a été limitée au domaine oncologique par une requête de mots-clés, avec validation automatisée via un script de correspondance de mots-clés oncologiques dans le titre. Les publications de type éditoriaux ou revues ont été exclues.
 
-![Distribution annuelle des classes positive et négative](/C:/Users/moham/.gemini/antigravity/brain/b404fade-c59b-4669-a258-182a6792d894/artifacts/figure_1.png)
+![Distribution annuelle des classes positive et négative](figures/figure_1.png)
 *Figure 1 : Distribution annuelle des articles positifs (paper mills) et négatifs (contrôles sains) dans le jeu de données CPM-11K.*
 
-![Part des éditeurs post-purge](/C:/Users/moham/.gemini/antigravity/brain/b404fade-c59b-4669-a258-182a6792d894/artifacts/figure_2.png)
+![Part des éditeurs post-purge](figures/figure_2.png)
 *Figure 2 : Parts relatives des principaux éditeurs au sein de la classe positive (paper mills) après application des filtres de purge.*
 
-![Ratio global de déséquilibre des classes](/C:/Users/moham/.gemini/antigravity/brain/b404fade-c59b-4669-a258-182a6792d894/artifacts/figure_5.png)
+![Ratio global de déséquilibre des classes](figures/figure_5.png)
 *Figure 3 : Proportion globale des classes positive et négative au sein du jeu de données final CPM-11K (ratio de déséquilibre de 1:4.26).*
 
 ### 1.2. Nettoyage et purge des données
@@ -38,7 +38,7 @@ Pour l'apprentissage supervisé, nous avons construit le jeu de données Cancer 
 2.  **Cascade de purge :** Après exclusion des résumés irrécupérables ou non oncologiques, le taux de perte s'élève à 17,0 % pour la classe positive contre 2,6 % pour la classe négative. Ce déséquilibre s'explique par les politiques de retrait sélectif des éditeurs.
 3.  **Filtrage temporel :** Les articles des années 2024-2025 ont été exclus en raison du délai incompressible de signalement des rétractions (*retraction lag*).
 
-![Cascade de purge et d'exclusion](/C:/Users/moham/.gemini/antigravity/brain/b404fade-c59b-4669-a258-182a6792d894/artifacts/figure_3.png)
+![Cascade de purge et d'exclusion](figures/figure_3.png)
 *Figure 4 : Cascade méthodologique d'inclusion, d'exclusion et de nettoyage des données pour les classes positive et négative.*
 
 ---
@@ -62,7 +62,7 @@ L'analyse de l'implémentation initiale du co-autorat (un seul auteur commun) a 
     *   **Validation :** 1 440 articles (252 pos, 1 188 neg)
     *   **Test :** 1 440 articles (252 pos, 1 188 neg)
 
-![Partition split volumes](/C:/Users/moham/.gemini/antigravity/brain/b404fade-c59b-4669-a258-182a6792d894/artifacts/figure_4.png)
+![Partition split volumes](figures/figure_4.png)
 *Figure 5 : Répartition des volumes d'articles positifs et négatifs au sein des partitions d'entraînement, de validation et de test (le pool Holdout Hindawi restant à part).*
 
 ---
@@ -83,7 +83,7 @@ Les distributions des longueurs de résumés sont homogènes entre les classes (
 | *(N = 5 544)* | Médiane | 1463,0 | 208,0 |
 | | Min / Max | 50 / 4983 | 6 / 789 |
 
-![Distribution des longueurs des résumés](/C:/Users/moham/.gemini/antigravity/brain/b404fade-c59b-4669-a258-182a6792d894/artifacts/figure_eda_lengths.png)
+![Distribution des longueurs des résumés](figures/figure_eda_lengths.png)
 *Figure 6 : Histogrammes comparatifs des distributions de longueurs des résumés (mots et caractères) pour les classes positive (paper mills) et négative (littérature légitime).*
 
 ### 3.2. Biais lexicaux et d'éditeurs
@@ -164,7 +164,7 @@ L'évaluation globale de ces modèles sur l'ensemble de validation (1 440 articl
 | **PubMedBERT (fine-tuned)** | 48,02% | 63,89% | 54,76% | 83,72% | 56,12% |
 | **SciBERT (fine-tuned)** | 52,61% | 59,13% | 55,68% | 84,48% | 58,41% |
 
-![Comparaison globale des performances](/C:/Users/moham/.gemini/antigravity/brain/b404fade-c59b-4669-a258-182a6792d894/artifacts/comparaison_globale.png)
+![Comparaison globale des performances](figures/comparaison_globale.png)
 *Figure 7 : Comparaison des scores F1 et ROC-AUC globaux des modèles classiques et gelés sur l'ensemble de validation.*
 
 #### Tableau comparatif stratifié par éditeur (Validation F1 / ROC-AUC)
@@ -181,7 +181,7 @@ L'évaluation globale de ces modèles sur l'ensemble de validation (1 440 articl
 | **PubMedBERT (fine-tuned)** | 76,19% (94,95%) | 60,73% (93,50%) | 47,10% (65,40%) |
 | **SciBERT (fine-tuned)** | 78,05% (96,06%) | 63,89% (93,44%) | 46,37% (66,62%) |
 
-![Comparaison stratifiée par éditeur](/C:/Users/moham/.gemini/antigravity/brain/b404fade-c59b-4669-a258-182a6792d894/artifacts/comparaison_stratified.png)
+![Comparaison stratifiée par éditeur](figures/comparaison_stratified.png)
 *Figure 8 : Comparaison des scores F1 des modèles par strate d'éditeur (Hindawi, Spandidos, Pooled Others) sur l'ensemble de validation.*
 
 
@@ -197,7 +197,7 @@ L'évaluation globale de ces modèles sur l'ensemble de validation (1 440 articl
 3. **vs. Embeddings Biomédicaux (PubMedBERT gelé) :** McNemar $\chi^2 = 14,62$ ($p = 0,000132$), confirmant une différence statistiquement significative. Le bootstrap estime une différence de F1 moyenne de $+8,10\%$ avec un intervalle de confiance à 95% de $[3,65\%, 12,68\%]$, démontrant la supériorité statistique du modèle lexical sur les embeddings gelés.
 4. **vs. PubMedBERT et SciBERT (fine-tunés) :** Le test de McNemar confirme que la répartition des erreurs de PubMedBERT ($p=0,780$) et de SciBERT ($p=0,112$) n'est pas significativement différente du modèle TF-IDF Combiné. Le bootstrap F1 estime une différence moyenne de $+1,09\%$ pour PubMedBERT (IC 95%: $[-2,88\%, +5,35\%]$) et $+1,92\%$ pour SciBERT (IC 95%: $[-2,20\%, +6,26\%]$). L'intervalle incluant 0, l'avantage apparent des modèles neuronaux n'est pas statistiquement distinguable du modèle classique.
 
-![Forest plot de significativité statistique](/C:/Users/moham/.gemini/antigravity/brain/b404fade-c59b-4669-a258-182a6792d894/artifacts/significativite_forest_plot.png)
+![Forest plot de significativité statistique](figures/significativite_forest_plot.png)
 *Figure 9 : Intervalles de confiance à 95% de la différence de F1 (dF1) par rapport au modèle TF-IDF Combiné et p-values associées au test de McNemar.*
 
 
