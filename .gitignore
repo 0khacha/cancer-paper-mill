@@ -5,11 +5,15 @@ __pycache__/
 .venv/
 venv/
 
-# Large raw & final data files
+# Large raw & processed data files
 data/raw/rwdb/retraction_watch.csv
 data/raw/tortured_phrases/
 data/raw/tanu_pro/
-data/final/
+data/processed/
+
+# Standard cruft
+.ipynb_checkpoints/
+.env
 
 # Backup archives
 *.zip
@@ -21,6 +25,8 @@ data/final/
 
 # Diagnostics archive
 # scripts/diagnostics/
+archive/leaky_data_v1/
+archive/leaky_models_v1/
 
 # Internal AI Archives
 .archive/

@@ -17,7 +17,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 # Config
 MODEL_NAME = "allenai/scibert_scivocab_uncased"
 MAX_LENGTH = 512
-BATCH_SIZE = 8
+BATCH_SIZE = 4
 GRAD_ACCUM_STEPS = 2  # Effective batch size = 16
 LR = 2e-5
 WEIGHT_DECAY = 0.01
@@ -146,9 +146,9 @@ def main():
     
     # Load data
     print("Loading data...")
-    with open("data/final/cancer_pm_train.json", "r", encoding="utf-8") as f:
+    with open("data/final_v2_period_stripped/cancer_pm_train.json", "r", encoding="utf-8") as f:
         train_records = json.load(f)
-    with open("data/final/cancer_pm_val.json", "r", encoding="utf-8") as f:
+    with open("data/final_v2_period_stripped/cancer_pm_val.json", "r", encoding="utf-8") as f:
         val_records = json.load(f)
         
     # Load publisher dictionaries for stratification
@@ -166,7 +166,7 @@ def main():
                     p = "Hindawi"
                 journal_to_publisher[j] = p
                 
-    with open('data/final/journal_to_nlm.json', 'r', encoding='utf-8') as f:
+    with open('data/final_v2_period_stripped/journal_to_nlm.json', 'r', encoding='utf-8') as f:
         j2nlm = json.load(f)
     nlm2raw = {v: k for k, v in j2nlm.items()}
     

@@ -68,10 +68,10 @@ def main():
     print(f"Device: {device}")
 
     # Load validation data
-    with open("data/final/cancer_pm_val.json", "r", encoding="utf-8") as f:
+    with open("data/final_v2_period_stripped/cancer_pm_val.json", "r", encoding="utf-8") as f:
         val_records = json.load(f)
 
-    with open('data/final/journal_to_nlm.json', 'r', encoding='utf-8') as f:
+    with open('data/final_v2_period_stripped/journal_to_nlm.json', 'r', encoding='utf-8') as f:
         j2nlm = json.load(f)
     nlm2raw = {v: k for k, v in j2nlm.items()}
 
@@ -154,7 +154,7 @@ def main():
     def eval_subgroup(model, tokenizer, pos_records, neg_records):
         records = pos_records + neg_records
         dataset = AbstractDataset(records, tokenizer)
-        loader = DataLoader(dataset, batch_size=8, shuffle=False)
+        loader = DataLoader(dataset, batch_size=4, shuffle=False)
         
         probs = []
         labels = []
@@ -173,21 +173,11 @@ def main():
         
         auc = roc_auc_score(labels, probs)
         
-        # Search for best F1 threshold
-        best_f1 = 0.0
-        best_thresh = 0.5
-        for t in np.arange(0.1, 0.9, 0.01):
-            preds = (probs >= t).astype(int)
-            f1 = f1_score(labels, preds, zero_division=0)
-            if f1 > best_f1:
-                best_f1 = f1
-                best_thresh = t
-                
-        # Standard threshold 0.5 metrics
-        preds_05 = (probs >= 0.5).astype(int)
-        f1_05 = f1_score(labels, preds_05, zero_division=0)
+        # Calculate F1 using frozen 0.36 threshold (which was used everywhere else)
+        preds_36 = (probs >= 0.36).astype(int)
+        f1_36 = f1_score(labels, preds_36, zero_division=0)
         
-        return auc, f1_05, best_f1, best_thresh
+        return auc, f1_36
 
     # 1. Evaluate PubMedBERT fine-tuned model
     print("\nEvaluating PubMedBERT...")
@@ -199,11 +189,11 @@ def main():
     model_pm.to(device)
     model_pm.eval()
 
-    auc_pm_a, f1_05_pm_a, best_f1_pm_a, bt_pm_a = eval_subgroup(model_pm, tokenizer_pm, sg_a, negatives)
-    auc_pm_b, f1_05_pm_b, best_f1_pm_b, bt_pm_b = eval_subgroup(model_pm, tokenizer_pm, sg_b, negatives)
+    auc_pm_a, f1_36_pm_a = eval_subgroup(model_pm, tokenizer_pm, sg_a, negatives)
+    auc_pm_b, f1_36_pm_b = eval_subgroup(model_pm, tokenizer_pm, sg_b, negatives)
 
-    print(f"PubMedBERT on SG A (IA vs Neg): AUC = {auc_pm_a:.4%}, F1@0.5 = {f1_05_pm_a:.4%}, Best F1 = {best_f1_pm_a:.4%} at threshold {bt_pm_a:.2f}")
-    print(f"PubMedBERT on SG B (Autre vs Neg): AUC = {auc_pm_b:.4%}, F1@0.5 = {f1_05_pm_b:.4%}, Best F1 = {best_f1_pm_b:.4%} at threshold {bt_pm_b:.2f}")
+    print(f"PubMedBERT on SG A (IA vs Neg): AUC = {auc_pm_a:.4%}, F1@0.36 = {f1_36_pm_a:.4%}")
+    print(f"PubMedBERT on SG B (Autre vs Neg): AUC = {auc_pm_b:.4%}, F1@0.36 = {f1_36_pm_b:.4%}")
 
     # 2. Evaluate SciBERT fine-tuned model
     print("\nEvaluating SciBERT...")
@@ -215,11 +205,11 @@ def main():
     model_sci.to(device)
     model_sci.eval()
 
-    auc_sci_a, f1_05_sci_a, best_f1_sci_a, bt_sci_a = eval_subgroup(model_sci, tokenizer_sci, sg_a, negatives)
-    auc_sci_b, f1_05_sci_b, best_f1_sci_b, bt_sci_b = eval_subgroup(model_sci, tokenizer_sci, sg_b, negatives)
+    auc_sci_a, f1_36_sci_a = eval_subgroup(model_sci, tokenizer_sci, sg_a, negatives)
+    auc_sci_b, f1_36_sci_b = eval_subgroup(model_sci, tokenizer_sci, sg_b, negatives)
 
-    print(f"SciBERT on SG A (IA vs Neg): AUC = {auc_sci_a:.4%}, F1@0.5 = {f1_05_sci_a:.4%}, Best F1 = {best_f1_sci_a:.4%} at threshold {bt_sci_a:.2f}")
-    print(f"SciBERT on SG B (Autre vs Neg): AUC = {auc_sci_b:.4%}, F1@0.5 = {f1_05_sci_b:.4%}, Best F1 = {best_f1_sci_b:.4%} at threshold {bt_sci_b:.2f}")
+    print(f"SciBERT on SG A (IA vs Neg): AUC = {auc_sci_a:.4%}, F1@0.36 = {f1_36_sci_a:.4%}")
+    print(f"SciBERT on SG B (Autre vs Neg): AUC = {auc_sci_b:.4%}, F1@0.36 = {f1_36_sci_b:.4%}")
 
 if __name__ == "__main__":
     main()

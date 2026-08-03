@@ -70,9 +70,9 @@ def get_stratified_metrics(lbls, prbs, thresh, name):
 
 def main():
     print("Loading data...")
-    with open("data/final/cancer_pm_train.json", "r", encoding="utf-8") as f:
+    with open("data/final_v2_period_stripped/cancer_pm_train.json", "r", encoding="utf-8") as f:
         train = json.load(f)
-    with open("data/final/cancer_pm_val.json", "r", encoding="utf-8") as f:
+    with open("data/final_v2_period_stripped/cancer_pm_val.json", "r", encoding="utf-8") as f:
         val = json.load(f)
 
     train_texts = [r["title"] + " " + r["abstract"] for r in train]
@@ -95,7 +95,7 @@ def main():
                     p = "Hindawi"
                 journal_to_publisher[j] = p
                 
-    with open('data/final/journal_to_nlm.json', 'r', encoding='utf-8') as f:
+    with open('data/final_v2_period_stripped/journal_to_nlm.json', 'r', encoding='utf-8') as f:
         j2nlm = json.load(f)
     nlm2raw = {v: k for k, v in j2nlm.items()}
 

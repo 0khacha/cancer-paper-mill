@@ -84,14 +84,14 @@ def main():
     # -------------------------------------------------------------
     # 1. Check Leakage: Holdout positives vs. Train positives (Hindawi)
     # -------------------------------------------------------------
-    with open("data/final/cancer_pm_train.json", "r", encoding="utf-8") as f:
+    with open("data/final_v2_period_stripped/cancer_pm_train.json", "r", encoding="utf-8") as f:
         train_records = json.load(f)
-    with open("data/final/cancer_pm_holdout.json", "r", encoding="utf-8") as f:
+    with open("data/final_v2_period_stripped/cancer_pm_holdout.json", "r", encoding="utf-8") as f:
         holdout_records = json.load(f)
-    with open("data/final/cancer_pm_val.json", "r", encoding="utf-8") as f:
+    with open("data/final_v2_period_stripped/cancer_pm_val.json", "r", encoding="utf-8") as f:
         val_records = json.load(f)
 
-    with open('data/final/journal_to_nlm.json', 'r', encoding='utf-8') as f:
+    with open('data/final_v2_period_stripped/journal_to_nlm.json', 'r', encoding='utf-8') as f:
         j2nlm = json.load(f)
     nlm2raw = {v: k for k, v in j2nlm.items()}
 

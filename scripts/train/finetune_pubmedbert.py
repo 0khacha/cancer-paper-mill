@@ -17,7 +17,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 # Config
 MODEL_NAME = "microsoft/BiomedNLP-BiomedBERT-base-uncased-abstract-fulltext"
 MAX_LENGTH = 512
-BATCH_SIZE = 8
+BATCH_SIZE = 4
 GRAD_ACCUM_STEPS = 2  # Effective batch size = 16
 LR = 2e-5
 WEIGHT_DECAY = 0.01
@@ -144,11 +144,11 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device} ({torch.cuda.get_device_name(0) if device.type == 'cuda' else 'CPU'})")
     
-    # Load normalized data
-    print("Loading normalized data...")
-    with open("data/final/cancer_pm_train_normalized.json", "r", encoding="utf-8") as f:
+    # Load data
+    print("Loading data...")
+    with open("data/final_v2_period_stripped/cancer_pm_train.json", "r", encoding="utf-8") as f:
         train_records = json.load(f)
-    with open("data/final/cancer_pm_val_normalized.json", "r", encoding="utf-8") as f:
+    with open("data/final_v2_period_stripped/cancer_pm_val.json", "r", encoding="utf-8") as f:
         val_records = json.load(f)
         
     # Load publisher dictionaries for stratification
@@ -166,7 +166,7 @@ def main():
                     p = "Hindawi"
                 journal_to_publisher[j] = p
                 
-    with open('data/final/journal_to_nlm.json', 'r', encoding='utf-8') as f:
+    with open('data/final_v2_period_stripped/journal_to_nlm.json', 'r', encoding='utf-8') as f:
         j2nlm = json.load(f)
     nlm2raw = {v: k for k, v in j2nlm.items()}
     
@@ -197,7 +197,7 @@ def main():
     epoch_metrics = []
     
     # Training Loop
-    print("\nStarting Fine-tuning (Normalized Text)...")
+    print("\nStarting Fine-tuning...")
     t_start = time.time()
     
     for epoch in range(1, EPOCHS + 1):
@@ -252,7 +252,7 @@ def main():
             "epoch": epoch,
             "model_state_dict": model.state_dict(),
             "metrics": val_res
-        }, f"models/pubmedbert_normalized_epoch_{epoch}.pt")
+        }, f"models/pubmedbert_epoch_{epoch}.pt")
         
     t_total = time.time() - t_start
     print(f"\nTraining completed in {t_total/60:.2f} minutes.")
@@ -263,7 +263,7 @@ def main():
     print(f"\nSelecting Epoch {best_epoch} as the best model (F1={epoch_metrics[best_epoch_idx]['best_f1']:.4%}).")
     
     # Load best checkpoint
-    checkpoint = torch.load(f"models/pubmedbert_normalized_epoch_{best_epoch}.pt", weights_only=False)
+    checkpoint = torch.load(f"models/pubmedbert_epoch_{best_epoch}.pt", weights_only=False)
     model.load_state_dict(checkpoint["model_state_dict"])
     
     # Run final evaluation
@@ -272,7 +272,7 @@ def main():
     
     # Stratified breakdown
     print("\n" + "="*80)
-    print("FINAL EVALUATION METRICS (Best Checkpoint) ON VALIDATION (Normalized)")
+    print("FINAL EVALUATION METRICS (Best Checkpoint) ON VALIDATION")
     print("="*80)
     print(f"Decision Threshold: {best_thresh:.2f}")
     print(f"Overall Precision:  {val_res['precision']:.4%}")
@@ -349,14 +349,14 @@ def main():
     }
     
     # Serialize results to json
-    with open("models/pubmedbert_normalized_results.json", "w") as f:
+    with open("models/pubmedbert_finetuned_results.json", "w") as f:
         json.dump(save_results, f, indent=2, default=str)
-    print("\nResults saved to models/pubmedbert_normalized_results.json")
+    print("\nResults saved to models/pubmedbert_finetuned_results.json")
     
-    # Copy checkpoint to models/pubmedbert_normalized_best.pt
+    # Copy checkpoint to models/pubmedbert_finetuned_best.pt
     import shutil
-    shutil.copyfile(f"models/pubmedbert_normalized_epoch_{best_epoch}.pt", "models/pubmedbert_normalized_best.pt")
-    print("Best model copied to models/pubmedbert_normalized_best.pt")
+    shutil.copyfile(f"models/pubmedbert_epoch_{best_epoch}.pt", "models/pubmedbert_finetuned_best.pt")
+    print("Best model copied to models/pubmedbert_finetuned_best.pt")
 
 if __name__ == "__main__":
     main()

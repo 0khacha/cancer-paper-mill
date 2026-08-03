@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import f1_score, roc_auc_score
 from sentence_transformers import SentenceTransformer
 
 # Ensure UTF-8 output
@@ -367,7 +368,7 @@ def main():
     with open(os.path.join(models_dir, 'significance_results.json'), "r", encoding="utf-8") as f:
         sig_results = json.load(f)
 
-    comp_models = ["TF-IDF Baseline", "Char N-grams", "PubMedBERT (frozen)"]
+    comp_models = ["TF-IDF Baseline", "Char N-grams", "PubMedBERT (frozen)", "PubMedBERT (fine-tuned)", "SciBERT (fine-tuned)"]
     means = [sig_results["bootstrap_ci"][m]["mean"] * 100 for m in comp_models]
     lowers = [sig_results["bootstrap_ci"][m]["lower"] * 100 for m in comp_models]
     uppers = [sig_results["bootstrap_ci"][m]["upper"] * 100 for m in comp_models]
