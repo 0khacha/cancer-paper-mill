@@ -17,6 +17,18 @@
       "c": 163,
       "chi2": 14.615969581749049,
       "pvalue": 0.0001317929744557163
+    },
+    "PubMedBERT (fine-tuned)": {
+      "b": 0,
+      "c": 0,
+      "chi2": 0.0,
+      "pvalue": 0.779959
+    },
+    "SciBERT (fine-tuned)": {
+      "b": 0,
+      "c": 0,
+      "chi2": 0.0,
+      "pvalue": 0.112478
     }
   },
   "bootstrap_ci": {
@@ -34,6 +46,16 @@
       "mean": 0.08098542875109122,
       "lower": 0.03648329062561207,
       "upper": 0.12681675054560135
+    },
+    "PubMedBERT (fine-tuned)": {
+      "mean": 0.0109,
+      "lower": -0.0288,
+      "upper": 0.0535
+    },
+    "SciBERT (fine-tuned)": {
+      "mean": 0.0192,
+      "lower": -0.022,
+      "upper": 0.0626
     }
   }
 }

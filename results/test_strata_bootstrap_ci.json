@@ -1,0 +1,81 @@
+{
+  "issue_1_root_cause": {
+    "with_class_weight_balanced": {
+      "argmax_threshold_val": 0.36,
+      "best_f1_val": 0.5365853658536586
+    },
+    "without_class_weight": {
+      "argmax_threshold_val": 0.19,
+      "best_f1_val": 0.5368421052631579
+    },
+    "confirmed_cause": "class_weight='balanced' was used in all original project scripts (significance_testing.py:41, generate_final_eval_figures.py:97, run_holdout_significance.py:66). eval_tfidf_combined.py omitted it, which shifts the predicted-probability distribution and moves the argmax threshold from 0.36 to 0.19. The F1 values at those respective argmax thresholds are within 0.02pp of each other."
+  },
+  "issue_2_test_strata_bootstrap_ci": {
+    "spandidos": {
+      "n_pos": 18,
+      "n_neg": 43,
+      "frozen_threshold": 0.36,
+      "point_estimate": {
+        "f1": 0.8125,
+        "auc": 0.9806201550387597
+      },
+      "f1_bootstrap_ci": {
+        "mean": 0.8062390101023316,
+        "lower": 0.631578947368421,
+        "upper": 0.9411764705882353,
+        "n_bootstrap": 2000
+      },
+      "auc_bootstrap_ci": {
+        "mean": 0.9799779348387528,
+        "lower": 0.9431500322997416,
+        "upper": 1.0,
+        "n_bootstrap": 2000
+      },
+      "thesis_values": {
+        "f1": 0.8125,
+        "auc": 0.9806
+      },
+      "delta_from_thesis": {
+        "f1": 0.0,
+        "auc": 2.015503875962832e-05
+      },
+      "thesis_value_inside_ci": {
+        "f1": true,
+        "auc": true
+      }
+    },
+    "others": {
+      "n_pos": 100,
+      "n_neg": 788,
+      "frozen_threshold": 0.36,
+      "point_estimate": {
+        "f1": 0.541095890410959,
+        "auc": 0.8943781725888325
+      },
+      "f1_bootstrap_ci": {
+        "mean": 0.5404035739469114,
+        "lower": 0.4748201438848921,
+        "upper": 0.6132448709242911,
+        "n_bootstrap": 2000
+      },
+      "auc_bootstrap_ci": {
+        "mean": 0.8947445060667433,
+        "lower": 0.8503867352108293,
+        "upper": 0.9329087746490429,
+        "n_bootstrap": 2000
+      },
+      "thesis_values": {
+        "f1": 0.5411,
+        "auc": 0.8944
+      },
+      "delta_from_thesis": {
+        "f1": -4.1095890410680624e-06,
+        "auc": -2.182741116751874e-05
+      },
+      "thesis_value_inside_ci": {
+        "f1": true,
+        "auc": true
+      }
+    }
+  }
+}
