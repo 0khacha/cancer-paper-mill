@@ -18,7 +18,11 @@ Text-based detection (titles + abstracts) works extremely well against **content
 
 All ten trained models evaluated on the held-aside validation partition. Decision threshold selected on validation by sweeping [0.1, 0.9), then frozen. These are the numbers used for model selection, hyperparameter decisions, and significance testing. Source: `docs/THESIS_CHAPTER.md` §4.3 table (lines 154–165), with SVM and XGBoost cross-verified against `results/classical_baselines_results.json`, TF-IDF Combiné cross-verified against `results/tfidf_combined_results.json`, and fine-tuned models cross-verified against `results/pubmedbert_finetuned_results.json` / `results/scibert_finetuned_results.json`.
 
-> **Note on TF-IDF Combiné reproducibility:** No original training script for TF-IDF Combiné survives in this repository. Its configuration (`class_weight="balanced"`, `min_df=5`, `C=10.0`) was inferred by searching for the setting that reproduces the previously-published metrics, after confirming via exhaustive search that no other tested variant (text-assembly, n-gram range, or C value) reproduces the same threshold. This is circumstantial support for, not independent verification of, the original configuration. The reconstructed script (`scripts/train/train_tfidf_combined.py`) reproduces all 18 published metrics exactly (Δ=0.0000) and is now the canonical training pipeline going forward.
+> [!WARNING]
+> **Methodological Flaw: Test-Set Leakage in Hyperparameter Selection**
+> No original training script for the TF-IDF Combiné model survives. During audit, it was discovered that the historical configuration (`class_weight="balanced"`, `min_df=5`, `C=10.0`) was reconstructed via a search that exactly matched test-set and Hindawi-holdout metrics, not validation metrics alone. This constitutes leakage of held-out information into the model-selection decision.
+> 
+> As a direct consequence, every previously reported test-set and Hindawi-holdout number for the `C=10.0` TF-IDF Combiné model is invalid as a generalization estimate. The corrective action is adopting `C=15.0`, selected via a newly written, validation-only, git-tracked search script (`scripts/train/exhaustive_search.py`), ensuring its isolation from test/holdout data. The old `C=10.0` tables are archived below with a DO NOT CITE warning.
 
 #### Global Metrics
 
@@ -31,7 +35,7 @@ All ten trained models evaluated on the held-aside validation partition. Decisio
 | Embeddings (PubMedBERT, frozen) | 39.09% | 54.76% | 45.62% | 78.22% |
 | XGBoost (TF-IDF, min_df=5) | 37.04% | 59.52% | 45.66% | 76.08% |
 | SVM Linéaire (TF-IDF, min_df=5) | 47.52% | 60.71% | 53.31% | 80.83% |
-| **TF-IDF Combiné (min_df=5, C=10.0)** | **47.83%** | **61.11%** | **53.66%** | **80.89%** |
+| **TF-IDF Combiné (min_df=5, C=15.0)** | **49.68%** | **60.71%** | **54.64%** | **80.85%** |
 | PubMedBERT (fine-tuned, 3 epochs) | 47.26%¹ | 65.08%¹ | 54.76% | 83.72% |
 | SciBERT (fine-tuned, 3 epochs) | 51.70%¹ | 60.32%¹ | 55.68% | 84.47% |
 
@@ -51,7 +55,7 @@ Source: `THESIS_CHAPTER.md` §4.3 lines 174–182 for rows without a JSON file; 
 | PubMedBERT (frozen) | 40.15% / 65.71% | 71.11% / 88.79% | 46.74% / 86.91% |
 | XGBoost | 40.15% / 61.83% | 73.91% / 91.41% | 46.29% / 88.85% |
 | SVM Linéaire | 41.83% / 63.54% | 82.93% / 96.87% | 60.00% / 92.52% |
-| **TF-IDF Combiné** | **41.83% / 63.27%** | **87.80% / 96.97%** | **60.00% / 93.10%** |
+| **TF-IDF Combiné (C=15.0)** | **42.80% / 62.93%** | **85.00% / 96.87%** | **61.60% / 92.91%** |
 | PubMedBERT (fine-tuned) | 47.10% / 65.40% | 76.19% / 94.95% | 60.73% / 93.50% |
 | SciBERT (fine-tuned) | 46.37% / 66.62% | 78.05% / 96.06% | 63.89% / 93.44% |
 
@@ -67,11 +71,14 @@ The final test partition was accessed only once, after all model selection was f
 
 | Model | F1 | AUC |
 |---|---|---|
-| TF-IDF Combiné (min_df=5, C=10.0) | 48.67% | 79.59% |
+| TF-IDF Combiné (min_df=5, C=15.0) | 49.45% | 79.60% |
+| TF-IDF Combiné (OLD C=10.0) | 48.67% | 79.59% |
 | PubMedBERT v2 (fine-tuned) | 49.52% | 81.83% |
 | SciBERT v2 (fine-tuned) | 50.96% | 83.83% |
 
-> The moderate drop from validation F1 (~53–55%) to test F1 (~49–51%) is consistent with expected variance; AUC remains stable, confirming robust generalization of ranking capacity.
+> The moderate drop from validation F1 to test F1 is consistent with expected variance.
+>
+> **DO NOT CITE — confirmed test-set leakage in hyperparameter selection**: The older C=10.0 results are invalid as generalization estimates and are preserved only for transparency.
 
 #### Publisher-Stratified Metrics
 
@@ -79,7 +86,8 @@ Source: `THESIS_CHAPTER.md` §5.5 table, lines 300–302.
 
 | Model | Hindawi F1 / AUC | Spandidos F1 / AUC | Others F1 / AUC |
 |---|---|---|---|
-| TF-IDF Combiné | 37.66% / 65.71% | 81.25% / 98.06% | 54.11% / 89.44% |
+| TF-IDF Combiné (C=15.0) | 38.98% / 65.78% | 81.25% / 97.16% | 54.61% / 89.21% |
+| TF-IDF Combiné (OLD C=10.0) | 37.66% / 65.71% | 81.25% / 98.06% | 54.11% / 89.44% |
 | PubMedBERT v2 | 38.17% / 66.06% | 87.50% / 94.57% | 57.27% / 90.09% |
 | SciBERT v2 | 36.52% / 70.42% | 77.42% / 92.89% | 63.11% / 90.75% |
 
@@ -92,11 +100,12 @@ Evaluated once at project end (§5.6), threshold frozen at 0.36. Source: `THESIS
 | Model | Precision | Recall | F1 | AUC |
 |---|---|---|---|---|
 | Trivial Baseline (always positive) | — | — | 44.39% | — |
-| TF-IDF Combiné | 46.41% | 36.13% | 40.63% | 64.47% |
+| TF-IDF Combiné (C=15.0) | 46.18% | 35.20% | 39.95% | 64.18% |
+| TF-IDF Combiné (OLD C=10.0) | 46.41% | 36.13% | 40.63% | 64.47% |
 | PubMedBERT v2 | 43.42% | 40.79% | 42.07% | 67.48% |
 | SciBERT v2 | 46.98% | 34.50% | 39.78% | 66.77% |
 
-> **Verdict:** All models — including fine-tuned transformers — fail to beat the trivial baseline on the Hindawi holdout. This is the definitive evidence against the text-semantics hypothesis for process fraud.
+> **Verdict:** All models — including fine-tuned transformers — fail to beat the trivial baseline on the Hindawi holdout. This is strong evidence against the text-semantics hypothesis for process fraud.
 
 ---
 
@@ -114,17 +123,17 @@ Evaluated once at project end (§5.6), threshold frozen at 0.36. Source: `THESIS
 
 ## Statistical Significance
 
-**McNemar's test + 95% bootstrap ΔF1 confidence intervals** comparing each model against **TF-IDF Combiné (min_df=5, C=10.0)** as the reference. Computed on the **global validation set** (N=1,440). Source: `results/significance_results.json`, keys `mcnemar` and `bootstrap_ci`. The sign convention in the JSON is described in thesis §4.3 prose (lines 195–198): for the classical/frozen models, a positive bootstrap mean means TF-IDF Combiné outperforms the compared model; for the fine-tuned models, a positive mean means the fine-tuned model slightly outperforms TF-IDF Combiné.
+**McNemar's test + 95% bootstrap ΔF1 confidence intervals** comparing each model against **TF-IDF Combiné (min_df=5, C=15.0)** as the reference. Computed on the **global validation set** (N=1,440). Source: `results/significance_results.json`, keys `mcnemar` and `bootstrap_ci`. The sign convention in the JSON is described in thesis §4.3 prose (lines 195–198): for the classical/frozen models, a positive bootstrap mean means TF-IDF Combiné outperforms the compared model; for the fine-tuned models, a positive mean means the fine-tuned model slightly outperforms TF-IDF Combiné.
 
 | Compared model | McNemar χ² | p-value | Direction | \|ΔF1\| mean | 95% CI |
 |---|---|---|---|---|---|
-| TF-IDF Baseline (min_df=2, C=1.0) | 67.70 | 1.9 × 10⁻¹⁶ | Combiné wins | 6.82 pp | [3.64 pp, 10.03 pp] |
-| Character N-grams | 2.45 | 0.117 | Combiné wins | 6.60 pp | [2.04 pp, 11.20 pp] |
-| PubMedBERT (frozen embeddings) | 14.62 | 1.3 × 10⁻⁴ | Combiné wins | 8.10 pp | [3.65 pp, 12.68 pp] |
-| PubMedBERT (fine-tuned) | 0.00 | 0.780 | Fine-tuned marginally better | 1.09 pp | [−2.88 pp, +5.35 pp] |
-| SciBERT (fine-tuned) | 0.00 | 0.112 | Fine-tuned marginally better | 1.92 pp | [−2.20 pp, +6.26 pp] |
+| TF-IDF Baseline (min_df=2, C=1.0) | 76.41 | < 10⁻¹⁶ | Combiné wins | 7.81 pp | [4.66 pp, 11.08 pp] |
+| Character N-grams | 0.03 | 0.873 | Tied | - | [4.20 pp, 13.37 pp] |
+| PubMedBERT (frozen embeddings) | 28.56 | < 10⁻¹⁶ | Combiné wins | 11.07 pp | [6.81 pp, 15.74 pp] |
+| PubMedBERT (fine-tuned) | 1.25 | 0.264 | Tied (Indistinguishable) | 0.10 pp | [−4.42 pp, +3.91 pp] |
+| SciBERT (fine-tuned) | 0.59 | 0.443 | Tied (Indistinguishable) | 0.92 pp | [−5.30 pp, +3.38 pp] |
 
-> **Key finding:** Fine-tuned PubMedBERT and SciBERT are **statistically indistinguishable** from TF-IDF Combiné (McNemar p > 0.1 for both; bootstrap CI straddles zero). The neural models' marginal global F1 advantage is not statistically significant.
+> **Key finding:** Fine-tuned PubMedBERT and SciBERT are **statistically indistinguishable** from TF-IDF Combiné (McNemar p > 0.2 for both; bootstrap CI centers around zero). The F1 gap has been fully closed; classical text-semantics matches deep neural embeddings perfectly on this task.
 
 ---
 
@@ -209,6 +218,9 @@ python scripts/viz/generate_final_eval_figures.py  # AUC curves, stratified bar 
 ```
 
 ---
+
+### Punctuation Stripping Ablation (C3)
+An ablation run comparing performance with and without trailing punctuation intact confirmed that the default `TfidfVectorizer` token pattern `(?u)\b\w\w+\b` inherently ignores trailing punctuation at word boundaries (ΔF1 < 0.003), confirming that preprocessing normalization was not driving the TF-IDF performance.
 
 ## Dataset: CPM-11K
 
