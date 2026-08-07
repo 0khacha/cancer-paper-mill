@@ -130,7 +130,7 @@ if os.path.exists('data/raw/rwdb/retraction_watch.csv'):
                     p = "Hindawi"
                 journal_to_publisher[j] = p
                 
-with open('data/final_v2_period_stripped/journal_to_nlm.json', 'r', encoding='utf-8') as f:
+with open('data/processed/journal_to_nlm.json', 'r', encoding='utf-8') as f:
     j2nlm = json.load(f)
 nlm2raw = {v: k for k, v in j2nlm.items()}
 
