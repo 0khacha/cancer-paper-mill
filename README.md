@@ -39,7 +39,7 @@ All ten trained models evaluated on the held-aside validation partition. Decisio
 | PubMedBERT (fine-tuned, 3 epochs) | 47.26%¹ | 65.08%¹ | 54.76% | 83.72% |
 | SciBERT (fine-tuned, 3 epochs) | 51.70%¹ | 60.32%¹ | 55.68% | 84.47% |
 
-> ¹ **Precision and recall for the fine-tuned models:** The thesis text (§4.3, lines 164–165) reports P=48.02%/R=63.89% for PubMedBERT and P=52.61%/R=59.13% for SciBERT. The values in this table come directly from `pubmedbert_finetuned_results.json → overall.{precision,recall}` and `scibert_finetuned_results.json → overall.{precision,recall}`. The discrepancy is due to the thesis reporting P/R at each model's own optimal threshold (0.28 for PubMedBERT, 0.23 for SciBERT), while the JSON records metrics at the 0.36 threshold that was frozen for test evaluation. F1 and AUC are consistent across both sources.
+> ¹ **Precision and recall for the fine-tuned models:** The thesis text (§4.3, lines 164–165) reports P=48.02%/R=63.89% for PubMedBERT and P=52.61%/R=59.13% for SciBERT. The values in this table come directly from `pubmedbert_finetuned_results.json → overall.{precision,recall}` and `scibert_finetuned_results.json → overall.{precision,recall}`. The discrepancy is due to the thesis reporting P/R at each model's own optimal threshold (0.28 for PubMedBERT, 0.23 for SciBERT), while the JSON records metrics at the model's own best threshold. F1 and AUC are consistent across both sources.
 
 #### Publisher-Stratified Metrics
 
@@ -63,7 +63,7 @@ Source: `THESIS_CHAPTER.md` §4.3 lines 174–182 for rows without a JSON file; 
 
 ---
 
-### Test Set (N = 1,440 · 252 pos / 1,188 neg · one-time access, threshold frozen at 0.36)
+### Test Set (N = 1,440 · 252 pos / 1,188 neg · one-time access, threshold frozen at 0.35)
 
 The final test partition was accessed only once, after all model selection was finalized. Only the three thesis reference models were evaluated in the original one-time run (§5.5). Source: `THESIS_CHAPTER.md` §5.5 table, lines 300–302 for PubMedBERT and SciBERT. The TF-IDF Combiné (`C=15.0`) metrics presented below are produced by the cleanly isolated `eval_tfidf_combined.py` script. The archived `C=10.0` metrics were produced by a reconstructed pipeline inferred by matching validation metrics, which suffered from test-set leakage (`results/tfidf_combined_results.json`).
 
@@ -95,7 +95,7 @@ Source: `THESIS_CHAPTER.md` §5.5 table, lines 300–302.
 
 ### Hindawi Holdout Generalization (N = 1,504 · 429 pos / 1,075 neg · fully withheld)
 
-Evaluated once at project end (§5.6), threshold frozen at 0.36. Source: `THESIS_CHAPTER.md` §5.6 prose, lines 310–313 for PubMedBERT and SciBERT. The TF-IDF Combiné (`C=15.0`) holdout metrics presented below are produced by the cleanly isolated `eval_tfidf_combined.py` script. The archived `C=10.0` metrics were produced by a reconstructed pipeline inferred by matching validation metrics, which suffered from test-set leakage (`results/tfidf_combined_results.json`).
+Evaluated once at project end (§5.6), threshold frozen at 0.35. Source: `THESIS_CHAPTER.md` §5.6 prose, lines 310–313 for PubMedBERT and SciBERT. The TF-IDF Combiné (`C=15.0`) holdout metrics presented below are produced by the cleanly isolated `eval_tfidf_combined.py` script. The archived `C=10.0` metrics were produced by a reconstructed pipeline inferred by matching validation metrics, which suffered from test-set leakage (`results/tfidf_combined_results.json`).
 
 | Model | Precision | Recall | F1 | AUC |
 |---|---|---|---|---|
@@ -129,7 +129,7 @@ Evaluated once at project end (§5.6), threshold frozen at 0.36. Source: `THESIS
 |---|---|---|---|---|---|
 | TF-IDF Baseline (min_df=2, C=1.0) | 76.41 | < 10⁻¹⁶ | Combiné wins | 7.81 pp | [4.66 pp, 11.08 pp] |
 | Character N-grams | 0.03 | 0.873 | Tied | - | [4.20 pp, 13.37 pp] |
-| PubMedBERT (frozen embeddings) | 28.56 | < 10⁻¹⁶ | Combiné wins | 11.07 pp | [6.81 pp, 15.74 pp] |
+| PubMedBERT (frozen embeddings) | 28.56 | 9.10 × 10⁻⁸ | Combiné wins | 11.07 pp | [6.81 pp, 15.74 pp] |
 | PubMedBERT (fine-tuned) | 1.25 | 0.264 | Tied (Indistinguishable) | 0.10 pp | [−4.42 pp, +3.91 pp] |
 | SciBERT (fine-tuned) | 0.59 | 0.443 | Tied (Indistinguishable) | 0.92 pp | [−5.30 pp, +3.38 pp] |
 
@@ -143,7 +143,7 @@ During the initial research phase, every fine-tuned model achieved perfect 100% 
 
 **Resolution:** A normalization pass stripped trailing periods, spaces, and semicolons from all titles and abstracts, yielding the v2 (canonical) dataset. After re-training on v2:
 - PubMedBERT: F1 = 54.76%, AUC = 83.72% (validation)
-- SciBERT: F1 = 55.68%, AUC = 84.48% (validation)
+- SciBERT: F1 = 55.68%, AUC = 84.47% (validation)
 - Label-permutation sanity check: AUC ≈ 53.7–54.7% (near-chance), confirming no structural leakage
 
 The pre-normalization "leaky" v1 assets are preserved in `archive/` for full reproducibility of the §5.8 audit narrative.
@@ -286,10 +286,12 @@ For full dataset methodology, purge rates, funding index artifacts, and known li
 
 ```
 cancer-paper-mill/
+├── .gitignore
+├── LICENSE
 ├── README.md
 ├── requirements.txt
-├── data/
-│   ├── processed/              ← Canonical v2 dataset (Git-ignored, local only)
+├── data/                       ← Git-ignored, local only
+│   ├── processed/              ← Canonical v2 dataset
 │   │   ├── cancer_pm_dataset.json
 │   │   └── recent_unstable_dataset.json
 │   └── raw/
@@ -306,17 +308,40 @@ cancer-paper-mill/
 │   ├── pubmedbert_finetuned_results.json    ← PubMedBERT epoch history + validation metrics
 │   ├── scibert_finetuned_results.json       ← SciBERT epoch history + validation metrics
 │   ├── significance_results.json           ← McNemar + bootstrap CIs vs TF-IDF Combiné
-│   └── tfidf_combined_results.json         ← TF-IDF Combiné val/test/holdout metrics (generated by scripts/eval/eval_tfidf_combined.py)
+│   └── tfidf_combined_results.json         ← TF-IDF Combiné val/test/holdout metrics
 ├── scripts/
-│   ├── data_build/             ← Dataset construction pipeline (5 scripts)
-│   ├── train/                  ← Model training scripts (3 scripts)
-│   ├── eval/                   ← Evaluation & significance testing (4 scripts)
+│   ├── audit/                  ← Verification outputs (1 file)
+│   │   └── others_ci_verification.json
+│   ├── data_build/             ← Dataset construction pipeline (5 scripts + 2 utils)
+│   │   ├── fetch_abstracts.py
+│   │   ├── generate_negatives.py
+│   │   ├── normalize_abstracts.py
+│   │   ├── split_dataset.py
+│   │   ├── validate_negatives.py
+│   │   └── utils/
+│   │       ├── artifacts.py
+│   │       └── stats.py
+│   ├── eval/                   ← Evaluation & significance testing (6 scripts)
+│   │   ├── compute_test_strata_bootstrap_ci.py
+│   │   ├── eval_final_test.py
+│   │   ├── eval_tfidf_combined.py
+│   │   ├── evaluate_all_models.py
+│   │   ├── run_holdout_significance.py
+│   │   └── significance_testing.py
+│   ├── train/                  ← Model training scripts (5 scripts)
+│   │   ├── exhaustive_search.py       ← Validation-only C search (C=15.0 selection)
+│   │   ├── finetune_pubmedbert.py
+│   │   ├── finetune_scibert.py
+│   │   ├── train_classical_baselines.py
+│   │   └── train_tfidf_combined.py
 │   └── viz/                    ← Figure generation (2 scripts)
+│       ├── generate_final_eval_figures.py
+│       └── generate_french_figures.py
 └── archive/                    ← Preserved v1 (leaky) artifacts for §5.8 audit
-    ├── diagnostics/
-    ├── leaky_data_v1/
-    ├── leaky_models_v1/        ← Git-ignored
-    └── leaky_results_v1/
+    ├── diagnostics/             ← 17 diagnostic scripts
+    ├── leaky_data_v1/           ← Git-ignored
+    ├── leaky_models_v1/         ← Git-ignored
+    └── leaky_results_v1/        ← 4 JSON result files
 ```
 
 ---
